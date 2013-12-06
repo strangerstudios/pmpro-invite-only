@@ -11,10 +11,10 @@ Author URI: http://www.strangerstudios.com
 /*
 	Set an array with the level ids of the levels which should require invite codes and generate them.
 	
-	e.g. array(1,2,3)
+	e.g.
+	global $pmproio_invite_levels;
+	$pmproio_invite_levels = array(1,2,3);
 */
-global $pmproio_invite_levels;
-$pmproio_invite_levels = array(1,2,3);
 
 //check if a level id requires an invite code or should generate one
 function pmproio_isInviteLevel($level_id)
@@ -31,9 +31,11 @@ function pmproio_pmpro_checkout_boxes()
 {
 	global $pmpro_level, $current_user;	
 	if(pmproio_isInviteLevel($pmpro_level->id))
-	{
-		if(isset($_REQUEST['invite_code']))
+	{		
+		if(!empty($_REQUEST['invite_code']))
 			$invite_code = $_REQUEST['invite_code'];
+		elseif(!empty($_SESSION['invite_code']))
+			$invite_code = $_SESSION['invite_code'];
 		elseif(is_user_logged_in())
 			$invite_code = $current_user->pmpro_invite_code_at_signup;
 		else
@@ -140,8 +142,22 @@ function pmproio_pmpro_after_checkout($user_id)
 		if(!empty($_REQUEST['invite_code']))
 			update_user_meta($user_id, "pmpro_invite_code_at_signup", $_REQUEST['invite_code']);
 	}
+	
+	//delete any session var
+	if(isset($_SESSION['invite_code']))
+		unset($_SESSION['invite_code']);
 }
 add_action("pmpro_after_checkout", "pmproio_pmpro_after_checkout", 10, 2);
+
+/*
+	Save invite code while at PayPal
+*/
+function pmproio_pmpro_paypalexpress_session_vars()
+{	
+	if(!empty($_REQUEST['invite_code']))
+		$_SESSION['invite_code'] = $_REQUEST['invite_code'];
+}
+add_action("pmpro_paypalexpress_session_vars", "pmproio_pmpro_paypalexpress_session_vars");
 
 /*
 	Save invite code used when a user is created for PayPal and other offsite gateways.
