@@ -23,13 +23,12 @@ Author URI: http://www.strangerstudios.com
 function pmproio_isInviteLevel($level_id)
 {
 	global $pmproio_invite_levels;
-	
-	return in_array($level_id, $pmproio_invite_levels);		
+	return in_array($level_id, $pmproio_invite_levels);
 }
 
 //get invite codes
-function pmproio_getInviteCodes($user_id = null) {
-
+function pmproio_getInviteCodes($user_id = null)
+{
     global $current_user;
 
     if(empty($user_id))
@@ -43,8 +42,8 @@ function pmproio_getInviteCodes($user_id = null) {
 }
 
 //save invite codes
-function pmproio_saveInviteCodes($user_id = null) {
-
+function pmproio_saveInviteCodes($user_id = null)
+{
     global $current_user, $wpdb;
 
     if(empty($user_id))
@@ -58,6 +57,7 @@ function pmproio_saveInviteCodes($user_id = null) {
         $old_codes = array();
     $new_codes = array();
 
+    //use constant or default to 1 code if not set
     if(defined('PMPROIO_CODES'))
         $quantity = PMPROIO_CODES;
     else
@@ -65,9 +65,13 @@ function pmproio_saveInviteCodes($user_id = null) {
 
     for($i=0; $i<$quantity; $i++) {
 
-        //generate a new code
+        //user_id part of code for easy checking later
+        $id_part = str_pad(dechex($user_id), 4, '0', STR_PAD_LEFT);
+
+        //random scramble part
         $scramble = md5(AUTH_KEY . $user_id . time() . SECURE_AUTH_KEY);
-        $code = substr($scramble, 0, 10);
+
+        $code = substr($id_part . $scramble, 0, 14);
 
         //if code is a duplicate or number, try again
         if(in_array($code, $old_codes) || in_array($code, $new_codes) || is_numeric($code)) {
@@ -88,14 +92,50 @@ function pmproio_saveInviteCodes($user_id = null) {
         return false;
 }
 
+//check if an invite code is valid
+function pmproio_checkInviteCode($invite_code)
+{
+    global $wpdb;
+
+    //default to false
+    $valid = false;
+
+    $user_id = pmproio_getUserFromInviteCode($invite_code);
+
+    //only valid if user still has membership, but allow filter
+    if(pmpro_hasMembershipLevel(0, $user_id) && apply_filters('pmproio_check_user', true))
+        $valid = false;
+
+    //search for code
+    $user_codes = pmproio_getInviteCodes($user_id);
+
+    if(!in_array($invite_code, $user_codes))
+        $valid = false;
+
+    //has code already been used?
+    $used = $wpdb->get_var("SELECT user_id FROM " . $wpdb->usermeta . " WHERE meta_key LIKE 'pmpro_invite_code_at_signup' AND meta_value LIKE '" . $invite_code . "'");
+
+    if(empty($used))
+        $valid = true;
+
+    return $valid;
+}
+
+//get user id from discount code
+function pmproio_getUserFromInviteCode($invite_code)
+{
+    $user_id = hexdec(substr($invite_code, 0, 4));
+    return $user_id;
+}
+
 /*
 	Add an invite code field to checkout
 */
 function pmproio_pmpro_checkout_boxes()
 {
-	global $pmpro_level, $current_user;	
+	global $pmpro_level, $current_user;
 	if(pmproio_isInviteLevel($pmpro_level->id))
-	{		
+	{
 		if(!empty($_REQUEST['invite_code']))
 			$invite_code = $_REQUEST['invite_code'];
 		elseif(!empty($_SESSION['invite_code']))
@@ -130,31 +170,31 @@ add_action('pmpro_checkout_boxes', 'pmproio_pmpro_checkout_boxes');
 	Require the invite code
 */
 function pmproio_pmpro_registration_checks($okay)
-{	
-	global $pmpro_level, $pmproio_invite_levels;	
+{
+	global $pmpro_level, $pmproio_invite_levels;
 	if(pmproio_isInviteLevel($pmpro_level->id))
 	{
 		global $pmpro_msg, $pmpro_msgt, $pmpro_error_fields, $wpdb;
-		
+
 		//get invite code
 		$invite_code = $_REQUEST['invite_code'];
-		
+
 		//is it real?
 		$real = $wpdb->get_var("SELECT user_id FROM $wpdb->usermeta WHERE meta_key = 'pmpro_invite_code' AND meta_value = '" . esc_sql($invite_code) . "' LIMIT 1");
-		
+
 		//make sure the user for that invite code has a membership level
 		if(!empty($real))
 		{
 			$real = pmpro_hasMembershipLevel($pmpro_invite_levels, $real);
 		}
-		
+
 		if(empty($invite_code) || empty($real))
 		{
 			pmpro_setMessage(__("An invite code is required for this level. Please enter a valid invite code.", "pmpro"), "pmpro_error");
-			$pmpro_error_fields[] = "invite_code";		
+			$pmpro_error_fields[] = "invite_code";
 		}
 	}
-	
+
 	return $okay;
 }
 add_filter("pmpro_registration_checks", "pmproio_pmpro_registration_checks");
@@ -176,17 +216,13 @@ function pmproio_pmpro_after_checkout($user_id)
 {
 	//get level
 	$level_id = intval($_REQUEST['level']);
-	
+
 	if(pmproio_isInviteLevel($level_id))
-	{	
+	{
 		//generate a code/etc
-		pmproio_pmpro_after_change_membership_level($level_id, $user_id);	
-		
-		//update code used
-		if(!empty($_REQUEST['invite_code']))
-			update_user_meta($user_id, "pmpro_invite_code_at_signup", $_REQUEST['invite_code']);
-	}
-	
+		pmproio_pmpro_after_change_membership_level($level_id, $user_id);
+    }
+
 	//delete any session var
 	if(isset($_SESSION['invite_code']))
 		unset($_SESSION['invite_code']);
@@ -197,7 +233,7 @@ add_action("pmpro_after_checkout", "pmproio_pmpro_after_checkout", 10, 2);
 	Save invite code while at PayPal
 */
 function pmproio_pmpro_paypalexpress_session_vars()
-{	
+{
 	if(!empty($_REQUEST['invite_code']))
 		$_SESSION['invite_code'] = $_REQUEST['invite_code'];
 }
@@ -213,7 +249,7 @@ function pmproio_pmpro_wp_new_user_notification($notify, $user_id)
 	{
 		update_user_meta($user_id, "pmpro_invite_code_at_signup", $_REQUEST['invite_code']);
 	}
-	
+
 	return $notify;
 }
 add_filter('pmpro_wp_new_user_notification', 'pmproio_pmpro_wp_new_user_notification', 10, 2);
@@ -224,12 +260,16 @@ add_filter('pmpro_wp_new_user_notification', 'pmproio_pmpro_wp_new_user_notifica
 function pmproio_pmpro_confirmation_message($message)
 {
 	global $current_user, $wpdb;
-	
-	$invite_code = $current_user->pmpro_invite_code;
-			
-	if(!empty($invite_code))
+
+	$invite_codes = pmproio_getInviteCodes();
+
+	if(!empty($invite_codes))
 	{
-		$message .= "<div class=\"pmpro_content_message\"><p>Give this invite code to others to use at checkout: <strong>" . $invite_code . "</strong></p></div>";
+		$textarea = '';
+        foreach($invite_codes as $code)
+            $textarea .= $code . '\n';
+
+        $message .= "<div class=\"pmpro_content_message\"><p>Give these invite codes to others to use at checkout:</p><textarea>" . $textarea . "</textarea>";
 	}
 	return $message;
 }
