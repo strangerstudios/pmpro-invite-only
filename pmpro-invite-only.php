@@ -14,6 +14,9 @@ Author URI: http://www.strangerstudios.com
 	e.g.
 	global $pmproio_invite_levels;
 	$pmproio_invite_levels = array(1,2,3);
+
+    Set the number of invite codes to be created.
+    define('PMPROIO_CODES', 10);
 */
 
 //check if a level id requires an invite code or should generate one
@@ -22,6 +25,67 @@ function pmproio_isInviteLevel($level_id)
 	global $pmproio_invite_levels;
 	
 	return in_array($level_id, $pmproio_invite_levels);		
+}
+
+//get invite codes
+function pmproio_getInviteCodes($user_id = null) {
+
+    global $current_user;
+
+    if(empty($user_id))
+        $user_id = $current_user->id;
+
+    //return if we still don't have a user id
+    if(empty($user_id))
+        return false;
+
+    return get_user_meta($user_id, 'pmpro_invite_code', true);
+}
+
+//save invite codes
+function pmproio_saveInviteCodes($user_id = null) {
+
+    global $current_user, $wpdb;
+
+    if(empty($user_id))
+        $user_id = $current_user->ID;
+
+    if(empty($user_id))
+        return false;
+
+    $old_codes = pmproio_getInviteCodes($user_id);
+    if(empty($old_codes))
+        $old_codes = array();
+    $new_codes = array();
+
+    if(defined('PMPROIO_CODES'))
+        $quantity = PMPROIO_CODES;
+    else
+        $quantity = 1;
+
+    for($i=0; $i<$quantity; $i++) {
+
+        //generate a new code
+        $scramble = md5(AUTH_KEY . $user_id . time() . SECURE_AUTH_KEY);
+        $code = substr($scramble, 0, 10);
+
+        //if code is a duplicate or number, try again
+        if(in_array($code, $old_codes) || in_array($code, $new_codes) || is_numeric($code)) {
+            $i--;
+            continue;
+        }
+
+        //code is ok, add it to array
+        $new_codes[] = $code;
+    }
+
+    $codes = array_merge($old_codes, $new_codes);
+
+    //update user meta
+    if(update_user_meta($user_id, 'pmpro_invite_code', $codes))
+        return $new_codes;
+    else
+        return false;
 }
 
 /*
@@ -103,27 +167,7 @@ function pmproio_pmpro_after_change_membership_level($level_id, $user_id)
 {
 	//does this level give out invite codes?
 	if(pmproio_isInviteLevel($level_id))
-	{
-		global $wpdb;
-		
-		//already have one?
-		$old_code = get_user_meta($user_id, "pmpro_invite_code", true);
-		
-		if(empty($old_code))
-		{
-			//generate a new code
-			while(empty($code))
-			{
-				$scramble = md5(AUTH_KEY . $user_id . time() . SECURE_AUTH_KEY);			
-				$code = substr($scramble, 0, 10);
-				$check = $wpdb->get_var("SELECT meta_value FROM $wpdb->usermeta WHERE meta_key = 'pmpro_invite_code' AND meta_value = '" . esc_sql($code) . "' LIMIT 1");				
-				if($check || is_numeric($code))
-					$code = NULL;
-			}
-			
-			update_user_meta($user_id, "pmpro_invite_code", $code);
-		}		
-	}		
+        pmproio_saveInviteCodes($user_id);
 }
 add_action("pmpro_after_change_membership_level", "pmproio_pmpro_after_change_membership_level", 10, 2);
 
