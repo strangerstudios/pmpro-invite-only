@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 Plugin Name: PMPro Invite Only
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-invite-only/
 Description: Users must have an invite code to sign up for certain levels. Users are given an invite code to share.
@@ -23,6 +23,8 @@ Author URI: http://www.strangerstudios.com
 function pmproio_isInviteLevel($level_id)
 {
 	global $pmproio_invite_levels;
+    if(empty($pmproio_invite_levels))
+        $pmproio_invite_levels = array();
 	return in_array($level_id, $pmproio_invite_levels);
 }
 
@@ -61,7 +63,6 @@ function pmproio_getInviteCodes($user_id = null, $sort_codes = false)
     $codes = array('unused' => $unused_codes, 'used' => $used_codes);
 
     return $codes;
-
 }
 
 //save invite codes
@@ -168,6 +169,66 @@ function pmproio_getUserFromInviteCode($invite_code)
 {
     $user_id = hexdec(substr($invite_code, 0, 4));
     return $user_id;
+}
+
+//display used/unused invite codes
+function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = false)
+{
+    global $current_user;
+
+    if(empty($user_id))
+        $user_id = $current_user->ID;
+
+    $codes = pmproio_getInviteCodes($current_user->ID, true);
+
+    if(empty($codes))
+        return false;
+
+    //start output buffering
+    ob_start();
+
+    if(!empty($unused))
+    { ?>
+        <textarea rows=5 cols=20 class="unused_codes" disabled><?php
+        foreach($codes['unused'] as $code)
+            echo $code . "\n"; ?>
+        </textarea> <?php
+    }
+    if(!empty($used))
+    { ?>
+            <table class="used_codes">
+                <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>User</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach($codes['used'] as $code => $user_id)
+                {
+                    $username = get_userdata($user_id)->user_login;
+                    if(current_user_can('manage_options'))
+                        $userlink = "<a href=" . add_query_arg('user_id', $user_id, admin_url('user-edit.php')) . ">" . $username . "</a>";
+                    ?>
+                    <tr>
+                        <td><?php echo $code; ?></td>
+                        <td>
+                            <?php
+                            if(!empty($userlink))
+                                echo $userlink;
+                            else
+                                echo $username; ?>
+                    </tr><?php
+                } ?>
+                </tbody>
+            </table><?php
+    }
+
+    //save html
+    $html = ob_get_contents();
+    ob_end_clean();
+
+    return $html;
 }
 
 /*
@@ -303,38 +364,61 @@ function pmproio_pmpro_confirmation_message($message)
 {
 	global $current_user;
 
-    $codes = pmproio_getInviteCodes($current_user->ID, true);
+    if(!empty($current_user->pmpro_invite_code) && pmproio_isInviteLevel($current_user->membership_level->id))
+    {
+        $message .= "<div class=\"pmpro_content_message\"><p>Give these invite codes to others to use at checkout:</p>";
+        $message .= pmproio_displayInviteCodes($current_user->ID);
+        $message .= "</div>";
+    }
 
-	if(!empty($codes))
-	{
-		$textarea = "<textarea rows=10 cols=20>";
-        foreach($codes['unused'] as $code)
-            $textarea .= $code . "\n";
-        $textarea .= "</textarea>";
-
-        $message .= "<div class=\"pmpro_content_message\"><p>Give these invite codes to others to use at checkout:</p>" . $textarea . "</div>";
-	}
-	return $message;
+    return $message;
 }
 add_filter("pmpro_confirmation_message", "pmproio_pmpro_confirmation_message");
 
+function pmproio_the_content_account_page($content)
+{
+    global $current_user, $pmpro_pages, $post;
+
+    if(!empty($current_user->ID) && !empty($current_user->pmpro_invite_code) && $post->ID == $pmpro_pages['account'])
+    {
+        ob_start();
+        ?>
+        <h2><?php _e('Unused Invite Codes', 'pmpro_invite_only'); ?></h2>
+        <p>Give these invite codes to others to use at checkout:</p>
+        <?php echo pmproio_displayInviteCodes(); ?>
+        <h2><?php _e('Used Invite Codes', 'pmpro_invite_only'); ?></h2>
+        <?php echo pmproio_displayInviteCodes($current_user->ID, false, true);
+
+        $temp_content = ob_get_contents();
+        ob_end_clean();
+        $content = str_replace('<!-- end pmpro_account-profile -->', '<!-- end pmpro_account-profile -->' . $temp_content, $content);
+    }
+    return $content;
+}
+add_filter('the_content', 'pmproio_the_content_account_page', 20, 1);
 /*
 	Show invite code fields on edit profile page for admins.
 */
 function pmproio_show_extra_profile_fields($user)
-{	
+{
 ?>
 	<h3><?php _e('Invite Codes', 'pmpro');?></h3>
  
 	<table class="form-table">
- 
 		<tr>
-			<th><?php _e('Invite Code', 'pmpro');?></th>			
+			<th><?php _e('Unused Invite Codes', 'pmpros');?></th>
 			<td>
-				<input type="text" name="invite_code" value="<?php echo esc_attr($user->pmpro_invite_code);?>" />
+				<?php echo pmproio_displayInviteCodes($user);?>
 			</td>
 		</tr>
-		
+		<tr>
+			<th><?php _e('Used Invite Codes', 'pmpros');?></th>
+            <td>
+                <div>
+                    <?php echo pmproio_displayInviteCodes($user, false, true); ?>
+                </div>
+            </td>
+		</tr>
 		<tr>
 			<th><?php _e('Invite Code Used at Signup', 'pmpro');?></th>
 			<td>
@@ -364,3 +448,4 @@ function pmproio_save_extra_profile_fields( $user_id )
 }
 add_action( 'personal_options_update', 'pmproio_save_extra_profile_fields' );
 add_action( 'edit_user_profile_update', 'pmproio_save_extra_profile_fields' );
+
