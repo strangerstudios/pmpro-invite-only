@@ -3,7 +3,7 @@
 Plugin Name: PMPro Invite Only
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-invite-only/
 Description: Users must have an invite code to sign up for certain levels. Users are given an invite code to share.
-Version: .1
+Version: .2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */

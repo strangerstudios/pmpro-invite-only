@@ -2,10 +2,10 @@
 Contributors: strangerstudios
 Tags: pmpro, membership, invite
 Requires at least: 3.5
-Tested up to: 3.7.1
-Stable tag: .1
+Tested up to: 3.9.1
+Stable tag: .2
 
-Users must have an invite code to sign up for certain levels. Users are given an invite code to share.
+Make certain levels invite only. After checkout, members will receive invite codes to share with others.
 
 == Description ==
 
@@ -17,7 +17,7 @@ Users must have an invite code to sign up for certain levels. Users are given an
 
 1. Upload the `pmpro-invite-only` directory to the `/wp-content/plugins/` directory of your site.
 1. Activate the plugin through the 'Plugins' menu in WordPress.
-1. Set the $pmpro_invite_only_levels array to set which levels should require and generate codes.
+1. Set the $pmpro_invite_only_levels array and (optional) PMPROIO_INVITE_CODES constant to set which levels should require and generate codes.
 
 == Frequently Asked Questions ==
 
@@ -26,5 +26,12 @@ Users must have an invite code to sign up for certain levels. Users are given an
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-invite-only/issues
 
 == Changelog ==
+= .2 =
+* Now showing used codes and their suers along with unused codes on the Account/Profile pages.
+* Confirmation, Account, and Profile pages updated to use new code system.
+* Added a bunch of new functions for getting, saving, checking, parsing, and displaying invite codes.
+* Invite codes now store their parent's user ID in the code, to make checking valid codes faster.
+* Added support for multiple codes generated at checkout. Admins can define this with the PMPROIO_INVITE_CODES constant.
+
 = .1 =
 * This is the initial version of the plugin.
