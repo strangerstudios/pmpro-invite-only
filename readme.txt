@@ -26,5 +26,10 @@ Users must have an invite code to sign up for certain levels. Users are given an
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-invite-only/issues
 
 == Changelog ==
+= .2 =
+* Added invite code to account page and confirmation emails.
+* Handling the PayPal Express review page better now.
+* Forced invite codes to be upper case.
+
 = .1 =
 * This is the initial version of the plugin.

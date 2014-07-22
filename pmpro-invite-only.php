@@ -3,7 +3,7 @@
 Plugin Name: PMPro Invite Only
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-invite-only/
 Description: Users must have an invite code to sign up for certain levels. Users are given an invite code to share.
-Version: .1
+Version: .2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -29,7 +29,8 @@ function pmproio_isInviteLevel($level_id)
 */
 function pmproio_pmpro_checkout_boxes()
 {
-	global $pmpro_level, $current_user;	
+	global $pmpro_level, $current_user, $pmpro_review;	
+	
 	if(pmproio_isInviteLevel($pmpro_level->id))
 	{		
 		if(!empty($_REQUEST['invite_code']))
@@ -40,24 +41,28 @@ function pmproio_pmpro_checkout_boxes()
 			$invite_code = $current_user->pmpro_invite_code_at_signup;
 		else
 			$invite_code = "";
-	?>
-	<table class="pmpro_checkout top1em" width="100%" cellpadding="0" cellspacing="0" border="0">
-		<thead>
-			<tr>
-				<th><?php _e('Invite Code', 'pmpro');?></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>
-					<label for="invite_code"><?php _e('Invite Code', 'pmpro');?></label>
-					<input id="invite_code" name="invite_code" type="text" class="input <?php echo pmpro_getClassForField("invite_code");?>" size="20" value="<?php echo esc_attr($invite_code);?>" />
-					<span class="pmpro_asterisk"> *</span>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-	<?php
+
+		if(empty($pmpro_review))
+		{
+		?>
+		<table class="pmpro_checkout top1em" width="100%" cellpadding="0" cellspacing="0" border="0">
+			<thead>
+				<tr>
+					<th><?php _e('Invite Code', 'pmpro');?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						<label for="invite_code"><?php _e('Invite Code', 'pmpro');?></label>
+						<input id="invite_code" name="invite_code" type="text" class="input <?php echo pmpro_getClassForField("invite_code");?>" size="20" value="<?php echo esc_attr($invite_code);?>" />
+						<span class="pmpro_asterisk"> *</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<?php
+		}
 	}
 }
 add_action('pmpro_checkout_boxes', 'pmproio_pmpro_checkout_boxes');
@@ -114,7 +119,7 @@ function pmproio_pmpro_after_change_membership_level($level_id, $user_id)
 			//generate a new code
 			while(empty($code))
 			{
-				$scramble = md5(AUTH_KEY . $user_id . time() . SECURE_AUTH_KEY);			
+				$scramble = strtoupper(md5(AUTH_KEY . $user_id . time() . SECURE_AUTH_KEY));
 				$code = substr($scramble, 0, 10);
 				$check = $wpdb->get_var("SELECT meta_value FROM $wpdb->usermeta WHERE meta_key = 'pmpro_invite_code' AND meta_value = '" . esc_sql($code) . "' LIMIT 1");				
 				if($check || is_numeric($code))
@@ -138,13 +143,21 @@ function pmproio_pmpro_after_checkout($user_id)
 		//generate a code/etc
 		pmproio_pmpro_after_change_membership_level($level_id, $user_id);	
 		
-		//update code used
+		//look for code
 		if(!empty($_REQUEST['invite_code']))
-			update_user_meta($user_id, "pmpro_invite_code_at_signup", $_REQUEST['invite_code']);
+			$invite_code = $_REQUEST['invite_code'];
+		elseif(!empty($_SESSION['invite_code']))
+			$invite_code = $_SESSION['invite_code'];
+		else
+			$invite_code = false;
+		
+		//update code used				
+		if(!empty($invite_code))
+			update_user_meta($user_id, "pmpro_invite_code_at_signup", $invite_code);
 	}
 	
 	//delete any session var
-	if(isset($_SESSION['invite_code']))
+	if(!empty($_SESSION['invite_code']))
 		unset($_SESSION['invite_code']);
 }
 add_action("pmpro_after_checkout", "pmproio_pmpro_after_checkout", 10, 2);
@@ -227,6 +240,7 @@ function pmproio_show_extra_profile_fields($user)
 add_action( 'show_user_profile', 'pmproio_show_extra_profile_fields' );
 add_action( 'edit_user_profile', 'pmproio_show_extra_profile_fields' );
 
+//save them
 function pmproio_save_extra_profile_fields( $user_id ) 
 {
 	if ( !current_user_can( 'edit_user', $user_id ) )
@@ -237,3 +251,59 @@ function pmproio_save_extra_profile_fields( $user_id )
 }
 add_action( 'personal_options_update', 'pmproio_save_extra_profile_fields' );
 add_action( 'edit_user_profile_update', 'pmproio_save_extra_profile_fields' );
+
+/*
+	Show an invite code on the account page.
+*/
+function pmproio_the_content_account_page($content)
+{
+	global $post, $pmpro_pages, $current_user, $wpdb;
+					
+	if(!is_admin() && $post->ID == $pmpro_pages['account'])
+	{
+		//what's their code?
+		$code = $current_user->pmpro_invite_code;		
+		
+		if(!empty($code))
+		{                        				
+			ob_start();
+			//get members
+			?>
+			<div id="pmpro_account-gift_codes" class="pmpro_box">        
+					 
+					<h3>Invite Code</h3>
+					
+					<p>Give this invite code to others to use at checkout: <strong><?php echo $code;?></strong></p>
+			</div>
+			<?php
+			
+			$temp_content = ob_get_contents();
+			ob_end_clean();
+			
+			$content = str_replace('<!-- end pmpro_account-profile -->', '<!-- end pmpro_account-profile -->' . $temp_content, $content);
+		}                        
+	}
+
+	return $content;	
+}
+add_action("the_content", "pmproio_the_content_account_page", 30);
+
+/*
+	Add invite code to confirmation emails.
+*/
+function pmprooi_pmpro_email_body($body, $email)
+{		
+	if(strpos($email->template, "checkout") !== false)
+	{		
+		$user = get_user_by("login", $email->data['user_login']);
+		$code = get_user_meta($user->ID, "pmpro_invite_code", true);				
+		
+		if(!empty($code))
+		{
+			$body = str_replace("<p>Account:", "<p>Give this invite code to others to use at checkout: <strong>$code</strong></p><p>Account:", $body);
+		}
+	}
+		
+	return $body;
+}
+add_filter("pmpro_email_body", "pmprooi_pmpro_email_body", 10, 2);
