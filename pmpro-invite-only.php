@@ -93,15 +93,29 @@ function pmproio_getInviteCodes($user_id = null, $sort_codes = false)
     //sort codes
     $unused_codes = array();
     $used_codes = array();
-
+	$code_count = array();
+	
+	//figure out used codes
 	foreach($codes as $code)
     {
-        $user_id = $wpdb->get_var("SELECT user_id FROM " . $wpdb->usermeta . " WHERE meta_key LIKE 'pmpro_invite_code_at_signup' AND meta_value LIKE '" . $code . "'");
-        if(empty($user_id))
-            $unused_codes[] = $code;
-        else
-            $used_codes[$code] = $user_id;
+        $user_ids = $wpdb->get_col("SELECT user_id FROM " . $wpdb->usermeta . " WHERE meta_key LIKE 'pmpro_invite_code_at_signup' AND meta_value LIKE '" . $code . "'");
+        $used_codes[$code] = $user_ids;
+		if(empty($code_count[$code]))
+			$code_count[$code] = 1;
+		else
+			$code_count[$code]++;
     }
+	
+	//figure out unused codes
+	$unused_codes = $codes;
+	if(PMPROIO_CODES_USES != false)
+	{
+		foreach($unused_codes as $key => $code)
+		{
+			if(!empty($code_count[$code]) && $code_count[$code] >= PMPROIO_CODES_USES)
+				unset($unused_codes[$key]);
+		}
+	}
 
     //add used codes to array
     $codes = array('unused' => $unused_codes, 'used' => $used_codes);
@@ -235,7 +249,7 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
     if(empty($user_id))
         $user_id = $current_user->ID;
 
-    $codes = pmproio_getInviteCodes($current_user->ID, true);
+    $codes = pmproio_getInviteCodes($user_id, true);
 	
     if(empty($codes))
         return false;
@@ -246,38 +260,62 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
     if(!empty($unused))
     {
 	?>
-        <textarea rows="5" cols="20" class="unused_codes" disabled="disabled"><?php
-			foreach($codes['unused'] as $code)
-				echo $code . "\n"; 
-		?></textarea>
+        <pre class="unused_codes" style="height: 100px; overflow: auto;"><?php
+			if(empty($codes['unused']))
+				echo "All codes have been used.";
+			else
+			{
+				foreach($codes['unused'] as $code)
+					echo $code . "\n"; 
+			}
+		?></pre>
 	<?php
     }
+	
     if(!empty($used))
     { ?>
             <table class="used_codes">
                 <thead>
-                <tr>
-                    <th>Code</th>
+                <tr>                    
                     <th>User</th>
+					<th>Code</th>
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach($codes['used'] as $code => $user_id)
-                {
-                    $username = get_userdata($user_id)->user_login;
-                    if(current_user_can('manage_options'))
-                        $userlink = "<a href=" . add_query_arg('user_id', $user_id, admin_url('user-edit.php')) . ">" . $username . "</a>";
-                    ?>
-                    <tr>
-                        <td><?php echo $code; ?></td>
-                        <td>
-                            <?php
-                            if(!empty($userlink))
-                                echo $userlink;
-                            else
-                                echo $username; ?>
-                    </tr><?php
-                } ?>
+                <?php 
+				if(empty($codes['used']))
+				{
+				?>
+				<tr>
+					<td colspan="2">None of your codes have been used yet.</td>
+				</tr>
+				<?php
+				}
+				else
+				{
+					foreach($codes['used'] as $code => $user_ids)
+					{
+						foreach($user_ids as $user_id)
+						{
+							$username = get_userdata($user_id)->user_login;
+							if(current_user_can('manage_options'))
+								$userlink = "<a href=" . add_query_arg('user_id', $user_id, admin_url('user-edit.php')) . ">" . $username . "</a>";
+							?>
+							<tr>								
+								<td>
+									<?php
+									if(!empty($userlink))
+										echo $userlink;
+									else
+										echo $username; 
+									?>
+								</td>
+								<td><?php echo $code; ?></td>
+							</tr><?php
+						}
+					} 
+				}
+				?>
                 </tbody>
             </table><?php
     }
@@ -452,7 +490,7 @@ function pmproio_show_extra_profile_fields($user)
  
 	<table class="form-table">
 		<tr>
-			<th><?php _e('Unused Invite Codes', 'pmpros');?></th>
+			<th><?php _e('Invite Codes', 'pmpros');?></th>
 			<td>
 				<?php echo pmproio_displayInviteCodes($user);?>
 			</td>
@@ -507,12 +545,14 @@ function pmproio_the_content_account_page($content)
     {
         ob_start();
         ?>
-        <h2><?php _e('Unused Invite Codes', 'pmpro_invite_only'); ?></h2>
-        <p>Give these invite codes to others to use at checkout:</p>
-        <?php echo pmproio_displayInviteCodes(); ?>
-        <h2><?php _e('Used Invite Codes', 'pmpro_invite_only'); ?></h2>
-        <?php echo pmproio_displayInviteCodes($current_user->ID, false, true);
-
+        <div id="pmproio_codes" class="pmpro_box clear">		
+			<h2><?php _e('Invite Codes', 'pmpro_invite_only'); ?></h2>
+			<p>Give these invite codes to others to use at checkout:</p>
+			<?php echo pmproio_displayInviteCodes(); ?>
+			<h2><?php _e('Used Invite Codes', 'pmpro_invite_only'); ?></h2>
+			<?php echo pmproio_displayInviteCodes($current_user->ID, false, true);?>
+		</div>
+		<?php			
         $temp_content = ob_get_contents();
         ob_end_clean();
         $content = str_replace('<!-- end pmpro_account-profile -->', '<!-- end pmpro_account-profile -->' . $temp_content, $content);
