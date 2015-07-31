@@ -21,12 +21,12 @@ Author URI: http://www.strangerstudios.com
 	global $pmproio_invite_given_levels = array(1);	//defaults to $pmproio_invite_required_levels
 	
 	Set the number of invite codes to be created at checkout (and maximum a user can get without admin intervention)
-    define('PMPROIO_CODES', 10);	//defaults to 1
+	define('PMPROIO_CODES', 10);	//defaults to 1
 		
 	Set the number of times each code can be used.
 	define('PMPROIO_CODES_USES', 1);	//defaults to unlimited
 */
-
+$pmproio_invite_required_levels = array(7);
 //Set default values.
 function pmproio_init_defaults()
 {
@@ -82,7 +82,7 @@ function pmproio_getInviteCodes($user_id = null, $sort_codes = false)
 
     $codes = get_user_meta($user_id, 'pmpro_invite_code', true);
 
-	//no codes
+    //no codes
 	if(empty($codes))
 		return false;	
 	
@@ -147,7 +147,7 @@ function pmproio_saveInviteCodes($new_codes, $user_id = null)
 }
 
 //create new invite codes
-function pmproio_createInviteCodes($user_id = null)
+function pmproio_createInviteCodes($user_id = null, $admin_override = false, $admin_quantity = 0)
 {
     global $current_user;
 
@@ -165,13 +165,20 @@ function pmproio_createInviteCodes($user_id = null)
     $new_codes = array();
 
     //use constant or default to 1 code if not set
-    if(defined('PMPROIO_CODES'))
-        $quantity = PMPROIO_CODES;
-    else
-        $quantity = 1;
-
+    
+	if($admin_override && current_user_can("manage_options"))
+	{
+		$quantity = $admin_quantity;
+	}
+    
+	else	if(defined('PMPROIO_CODES'))
+		$quantity = PMPROIO_CODES;
+	else
+		$quantity = 1;
+    
 	//how many do we need to make?
 	$quantity = $quantity - count($old_codes);
+	
 	
 	if($quantity > 0)
 	{	
@@ -195,8 +202,8 @@ function pmproio_createInviteCodes($user_id = null)
 			$new_codes[] = $code;
 		}
 	}
-		
-    return $new_codes;
+	
+	return $new_codes;
 }
 
 //check if an invite code is valid
@@ -248,9 +255,9 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 
     if(empty($user_id))
         $user_id = $current_user->ID;
-
+    
     $codes = pmproio_getInviteCodes($user_id, true);
-	
+    	
     if(empty($codes))
         return false;
 
@@ -484,25 +491,29 @@ add_filter("pmpro_confirmation_message", "pmproio_pmpro_confirmation_message");
 	Show invite code fields on edit profile page for admins.
 */
 function pmproio_show_extra_profile_fields($user)
-{
-?>
+{	
+	if(current_user_can('manage_options'))
+	{?>
+
 	<h3><?php _e('Invite Codes', 'pmpro');?></h3>
  
 	<table class="form-table">
 		<tr>
 			<th><?php _e('Invite Codes', 'pmpros');?></th>
 			<td>
-				<?php echo pmproio_displayInviteCodes($user);?>
+				<?php echo pmproio_displayInviteCodes($user->ID);?>
 			</td>
 		</tr>
 		<tr>
 			<th><?php _e('Used Invite Codes', 'pmpros');?></th>
             <td>
                 <div>
-                    <?php echo pmproio_displayInviteCodes($user, false, true); ?>
+                    <?php echo pmproio_displayInviteCodes($user->ID, false, true); ?>
                 </div>
             </td>
 		</tr>
+		<tr>Increase total available invites to <input type="text" size="4" name="pmpro_add_invites" id="pmpro_add_invites" value="" /></tr>
+			
 		<tr>
 			<th><?php _e('Invite Code Used at Signup', 'pmpro');?></th>
 			<td>
@@ -518,7 +529,9 @@ function pmproio_show_extra_profile_fields($user)
 		
 	</table>
 <?php
+	}
 }
+
 add_action( 'show_user_profile', 'pmproio_show_extra_profile_fields' );
 add_action( 'edit_user_profile', 'pmproio_show_extra_profile_fields' );
 
@@ -530,6 +543,14 @@ function pmproio_save_extra_profile_fields( $user_id )
  
 	if(!empty($_POST['invite_code']))
 		update_user_meta($user_id, "pmpro_invite_code", $_POST['invite_code']);
+	
+	$invites_to_add = intval($_POST['pmpro_add_invites'], 10);
+	
+	if(!empty($_POST['pmpro_add_invites']) && $invites_to_add > 0 && current_user_can("manage_options"))
+	{
+		$codes = pmproio_createInviteCodes($user_id, true, $invites_to_add);
+		pmproio_saveInviteCodes($codes, $user_id);
+	}
 }
 add_action( 'personal_options_update', 'pmproio_save_extra_profile_fields' );
 add_action( 'edit_user_profile_update', 'pmproio_save_extra_profile_fields' );
