@@ -26,7 +26,7 @@ Author URI: http://www.strangerstudios.com
 	Set the number of times each code can be used.
 	define('PMPROIO_CODES_USES', 1);	//defaults to unlimited
 */
-$pmproio_invite_required_levels = array(7);
+
 //Set default values.
 function pmproio_init_defaults()
 {
