@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, membership, invite
 Requires at least: 3.5
-Tested up to: 4.0
-Stable tag: .2
+Tested up to: 4.3.1
+Stable tag: .3
 
 Make certain levels invite only. After checkout, members will receive invite codes to share with others.
 
@@ -26,6 +26,9 @@ Users must have an invite code to sign up for certain levels. Users are given an
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-invite-only/issues
 
 == Changelog ==
+= .3 =
+* Admins can now create additional invites for users.
+
 = .2 =
 * Added invite code to account page and confirmation emails.
 * Handling the PayPal Express review page better now.
