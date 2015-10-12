@@ -1,6 +1,6 @@
 <?php
 /**
-Plugin Name: PMPro Invite Only
+Plugin Name: Paid Memberships Pro - Invite Only Add On
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-invite-only/
 Description: Users must have an invite code to sign up for certain levels. Users are given an invite code to share.
 Version: .2
@@ -579,4 +579,19 @@ function pmprooi_pmpro_email_body($body, $email)
 		
 	return $body;
 }
-add_filter("pmpro_email_body", "pmprooi_pmpro_email_body", 10, 2);
+add_filter("pmpro_email_body", "pmproio_pmpro_email_body", 10, 2);
+
+/*
+Function to add links to the plugin row meta
+*/
+function pmproio_plugin_row_meta($links, $file) {
+	if(strpos($file, 'pmpro-invite-only.php') !== false)
+	{
+		$new_links = array(
+			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
+		);
+		$links = array_merge($links, $new_links);
+	}
+	return $links;
+}
+add_filter('plugin_row_meta', 'pmproio_plugin_row_meta', 10, 2);

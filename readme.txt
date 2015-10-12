@@ -1,6 +1,6 @@
-=== PMPro Invite Only ===
+=== Paid Memberships Pro - Invite Only Add On ===
 Contributors: strangerstudios
-Tags: pmpro, membership, invite
+Tags: pmpro, paid memberships pro, membership, invite
 Requires at least: 3.5
 Tested up to: 4.0
 Stable tag: .2
