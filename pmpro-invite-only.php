@@ -1,5 +1,5 @@
 <?php
-/**
+/*
 Plugin Name: Paid Memberships Pro - Invite Only Add On
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-invite-only/
 Description: Users must have an invite code to sign up for certain levels. Users are given an invite code to share.
@@ -585,10 +585,10 @@ add_filter('the_content', 'pmproio_the_content_account_page', 20, 1);
 /*
 	Add invite code to confirmation emails.
 */
-function pmprooi_pmpro_email_body($body, $email)
+function pmproio_pmpro_email_body($body, $email)
 {		
-	if(strpos($email->template, "checkout") !== false)
-	{		
+	if(strpos($email->template, "checkout") !== false && strpos($email->template, "debug") === false)
+	{
 		$user = get_user_by("login", $email->data['user_login']);
 		$code = get_user_meta($user->ID, "pmpro_invite_code", true);				
 		
@@ -609,6 +609,7 @@ function pmproio_plugin_row_meta($links, $file) {
 	if(strpos($file, 'pmpro-invite-only.php') !== false)
 	{
 		$new_links = array(
+			'<a href="' . esc_url('http://www.paidmembershipspro.com/add-ons/plus-add-ons/pmpro-invite-only/') . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
 			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
 		);
 		$links = array_merge($links, $new_links);
