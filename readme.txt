@@ -2,7 +2,7 @@
 Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, membership, invite
 Requires at least: 3.5
-Tested up to: 4.3.1
+Tested up to: 4.4
 Stable tag: .3.1
 
 Make certain levels invite only. After checkout, members will receive invite codes to share with others.
@@ -27,7 +27,8 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 
 == Changelog ==
 = .3.1 =
-* Version number bump for upgrades
+* BUG: Fixed issues where old ->pmpro_invite_codes method was used to check for a user's invite codes.
+* BUG: Fixed grammar when showing one invite code in a list.
 
 = .3 =
 * Admins can now create additional invites for users.

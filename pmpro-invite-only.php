@@ -478,9 +478,14 @@ function pmproio_pmpro_confirmation_message($message)
 {
 	global $current_user;
 
-    if(!empty($current_user->pmpro_invite_code) && pmproio_isInviteGivenLevel($current_user->membership_level->id))
+	$codes = pmproio_getInviteCodes($current_user->ID);
+
+    if(!empty($codes) && pmproio_isInviteGivenLevel($current_user->membership_level->id))
     {
-        $message .= "<div class=\"pmpro_content_message\"><p>Give these invite codes to others to use at checkout:</p>";
+        if(count($codes) == 1)
+        	$message .= "<div class=\"pmpro_content_message\"><p>Give this invite code to others to use at checkout:</p>";
+        else
+        	$message .= "<div class=\"pmpro_content_message\"><p>Give these invite codes to others to use at checkout:</p>";
         $message .= pmproio_displayInviteCodes($current_user->ID);
         $message .= "</div>";
     }
@@ -564,13 +569,22 @@ function pmproio_the_content_account_page($content)
 {
     global $current_user, $pmpro_pages, $post;
 
-    if(!empty($current_user->ID) && !empty($current_user->pmpro_invite_code) && $post->ID == $pmpro_pages['account'])
+    if(!empty($current_user->ID) && $post->ID == $pmpro_pages['account'])
     {
+    	//make sure they have codes
+    	$codes = pmproio_getInviteCodes($current_user->ID);
+        if(empty($codes))
+        	return $content;
+
         ob_start();
         ?>
         <div id="pmproio_codes" class="pmpro_box clear">		
 			<h2><?php _e('Invite Codes', 'pmpro_invite_only'); ?></h2>
-			<p>Give these invite codes to others to use at checkout:</p>
+			<?php if(count($codes) == 1) { ?>
+				<p>Give this invite code to others to use at checkout:</p>
+			<?php } else { ?>
+				<p>Give these invite codes to others to use at checkout:</p>
+			<?php } ?>
 			<?php echo pmproio_displayInviteCodes(); ?>
 			<h2><?php _e('Used Invite Codes', 'pmpro_invite_only'); ?></h2>
 			<?php echo pmproio_displayInviteCodes($current_user->ID, false, true);?>
