@@ -126,6 +126,8 @@ function pmproio_getInviteCodes($user_id = null, $sort_codes = false)
 //save invite codes
 function pmproio_saveInviteCodes($new_codes, $user_id = null)
 {
+	global $current_user;
+	
     if(empty($user_id))
         $user_id = $current_user->ID;
 
