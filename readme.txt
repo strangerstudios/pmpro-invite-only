@@ -3,21 +3,28 @@ Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, membership, invite
 Requires at least: 3.5
 Tested up to: 4.4
-Stable tag: .3.1
+Stable tag: .3.2
 
-Make certain levels invite only. After checkout, members will receive invite codes to share with others.
+Specify membership level(s) as "invite only" and provide members with invite codes to share after checkout.
 
 == Description ==
 
-This plugin currently requires Paid Memberships Pro. 
+The Invite Only Add On allows you to restrict membership signups for specific membership levels and require an invite code.
 
-Users must have an invite code to sign up for certain levels. Users are given an invite code to share.
+After completing their membership checkout, your member will receive a unique invite code that they can share with others. You can specify the number of uses on the invite code, make it unlimited, or give the member multiple single-use codes.
+
+A list of used/unused invite code(s) is displayed on the Membership Account page, allowing a member to see who has used their code to register and manage the unused codes tied to their account.
+
+The admin can increase the number of invites available for a user on the "Edit User" page.
+
+Note: this plugin requires Paid Memberships Pro. 
 
 == Installation ==
 
 1. Upload the `pmpro-invite-only` directory to the `/wp-content/plugins/` directory of your site.
 1. Activate the plugin through the 'Plugins' menu in WordPress.
-1. Set the $pmpro_invite_only_levels array and (optional) PMPROIO_INVITE_CODES constant to set which levels should require and generate codes.
+1. Set the $pmproio_invite_required_levels array to specify the levels which should require invite codes and generate them and (optionally) set the $pmproio_invite_given_levels if only specific levels should be given invite codes to share.
+2. Other optional settings: PMPROIO_CODES and PMPROIO_CODES_USES constants can be set to define the number of codes to generate and number of uses code allowed per code.
 
 == Frequently Asked Questions ==
 
@@ -26,6 +33,9 @@ Users must have an invite code to sign up for certain levels. Users are given an
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-invite-only/issues
 
 == Changelog ==
+= .3.2 =
+* ENHANCEMENT: Updates to the display of used and unused codes in the membership confirmation page and user profile.
+
 = .3.1 =
 * BUG: Fixed issues where old ->pmpro_invite_codes method was used to check for a user's invite codes.
 * BUG: Fixed grammar when showing one invite code in a list.
