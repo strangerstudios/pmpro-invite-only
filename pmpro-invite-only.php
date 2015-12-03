@@ -282,7 +282,18 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 	
     if(!empty($used))
     { 
-		if(empty($codes['used']))
+		//figure out if codes have been used
+		if(!empty($codes['used']))
+		{
+			foreach($codes['used'] as $code => $user_ids)
+				if(!empty($user_ids))
+				{
+					$codes_used = true;
+					break;
+				}
+		}
+
+		if(empty($codes_used))
 		{
 			_e('None of your codes have been used.','pmpro_invite_only');
 		}
@@ -303,8 +314,15 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 						foreach($user_ids as $user_id)
 						{
 							$display_name = get_userdata($user_id)->display_name;
-							if(current_user_can('manage_options'))
-								$userlink = "<a href=" . add_query_arg('user_id', $user_id, admin_url('user-edit.php')) . ">" . $display_name . "</a>";
+							if(empty($display_name))
+							{
+								$display_name = __('N/A (Deleted or abandoned.');
+							}
+							else
+							{
+								if(current_user_can('manage_options'))
+									$userlink = "<a href=" . add_query_arg('user_id', $user_id, admin_url('user-edit.php')) . ">" . $display_name . "</a>";
+							}
 							?>
 							<tr>								
 								<td>

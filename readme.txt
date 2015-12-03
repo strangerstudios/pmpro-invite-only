@@ -34,6 +34,7 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 
 == Changelog ==
 = .3.2 =
+* BUG: Fixed bug where "codes used" section would show up even if no codes were used.
 * ENHANCEMENT: Updates to the display of used and unused codes in the membership confirmation page and user profile.
 
 = .3.1 =
