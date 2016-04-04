@@ -537,10 +537,20 @@ function pmproio_show_extra_profile_fields($user)
 				<td>
 					<?php
 						$invite_code_used = $user->pmpro_invite_code_at_signup;
-						if(empty($invite_code_used))
+						if(empty($invite_code_used)) {
 							echo "N/A";
-						else
-							echo $invite_code_used;
+						}
+						else {
+							$user_id = pmproio_getUserFromInviteCode($invite_code_used);
+							$user_info = get_userdata($user_id);
+
+							if (false !== $user_info) {
+								echo sprintf("%s (%s)", $invite_code_used, $user_info->display_name);
+							}
+							else {
+								echo $invite_code_used;
+							}
+						}
 					?>
 				</td>
 			</tr>
