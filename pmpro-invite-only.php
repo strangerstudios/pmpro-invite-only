@@ -99,13 +99,15 @@ function pmproio_getInviteCodes($user_id = null, $sort_codes = false)
 	foreach($codes as $code)
     {
         $user_ids = $wpdb->get_col("SELECT user_id FROM " . $wpdb->usermeta . " WHERE meta_key LIKE 'pmpro_invite_code_at_signup' AND meta_value LIKE '" . $code . "'");
-        $used_codes[$code] = $user_ids;
-		if(empty($code_count[$code]))
-			$code_count[$code] = 1;
-		else
-			$code_count[$code]++;
+	    if(!empty($user_ids)) {
+
+		    $used_codes[$code] = $user_ids;
+
+		    //add to code count
+		    $code_count[$code] = count($user_ids);
+	    }
     }
-	
+
 	//figure out unused codes
 	$unused_codes = $codes;
 	if(PMPROIO_CODES_USES != false)
