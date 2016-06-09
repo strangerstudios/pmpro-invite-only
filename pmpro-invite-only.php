@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Invite Only Add On
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-invite-only/
 Description: Users must have an invite code to sign up for certain levels. Users are given an invite code to share.
-Version: .3.2
+Version: .3.3
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -18,7 +18,8 @@ Author URI: http://www.strangerstudios.com
 	The above is the only required global setting to get pmpro-invite-only working. Below are some optional settings.
 	
 	Should only specific levels be given invite codes to share?
-	global $pmproio_invite_given_levels = array(1);	//defaults to $pmproio_invite_required_levels
+	global $pmproio_invite_given_levels;
+	$pmproio_invite_given_levels = array(1);	//defaults to $pmproio_invite_required_levels
 	
 	Set the number of invite codes to be created at checkout (and maximum a user can get without admin intervention)
 	define('PMPROIO_CODES', 10);	//defaults to 1
