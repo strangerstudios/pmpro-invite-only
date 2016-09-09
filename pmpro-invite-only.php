@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Invite Only Add On
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-invite-only/
 Description: Users must have an invite code to sign up for certain levels. Users are given an invite code to share.
-Version: .3.3
+Version: .3.4
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -620,11 +620,15 @@ function pmproio_pmpro_email_body($body, $email)
 	if(strpos($email->template, "checkout") !== false && strpos($email->template, "debug") === false)
 	{
 		$user = get_user_by("login", $email->data['user_login']);
-		$code = get_user_meta($user->ID, "pmpro_invite_code", true);				
-		
-		if(!empty($code))
+		$codes = get_user_meta($user->ID, "pmpro_invite_code", true);
+		if(!empty($codes))
 		{
-			$body = str_replace("<p>Account:", "<p>Give this invite code to others to use at checkout: <strong>$code</strong></p><p>Account:", $body);
+			$list = "";
+			foreach($codes as $code)
+			{
+				$list .= "{$code}<br>";
+			}
+			$body = str_replace("<p>Account:", "<p>Give these invite codes to others to use at checkout:<br><strong>{$list}</strong></p><p>Account:", $body);
 		}
 	}
 		
