@@ -10,19 +10,19 @@ Author URI: http://www.strangerstudios.com
 
 /*
 	Set an array with the level ids which should require invite codes and generate them.
-	
+
 	e.g.
 	global $pmproio_invite_required_levels;
 	$pmproio_invite_required_levels = array(1,2,3);
-	
+
 	The above is the only required global setting to get pmpro-invite-only working. Below are some optional settings.
-	
+
 	Should only specific levels be given invite codes to share?
 	global $pmproio_invite_given_levels = array(1);	//defaults to $pmproio_invite_required_levels
-	
+
 	Set the number of invite codes to be created at checkout (and maximum a user can get without admin intervention)
 	define('PMPROIO_CODES', 10);	//defaults to 1
-		
+
 	Set the number of times each code can be used.
 	define('PMPROIO_CODES_USES', 1);	//defaults to unlimited
 */
@@ -31,22 +31,22 @@ Author URI: http://www.strangerstudios.com
 function pmproio_init_defaults()
 {
 	global $pmproio_invite_levels, $pmproio_invite_required_levels, $pmproio_invite_given_levels;
-	
+
 	//which levels require invites?
 	if(isset($pmproio_invite_levels) && !isset($pmproio_invite_required_levels))
 		$pmproio_invite_required_levels = $pmproio_invite_levels;
-		
+
 	//which levels are given invite codes?
 	if(!isset($pmproio_invite_given_levels))
 		$pmproio_invite_given_levels = $pmproio_invite_required_levels;
-		
+
 	//how many codes to give?
 	if(!defined('PMPROIO_CODES'))
 		define('PMPROIO_CODES', 1);
-		
+
 	//how many times can a code be used
 	if(!defined('PMPROIO_CODES_USES'))
-		define('PMPROIO_CODES_USES', false);		
+		define('PMPROIO_CODES_USES', false);
 }
 add_action('init', 'pmproio_init_defaults', 99);
 
@@ -84,17 +84,17 @@ function pmproio_getInviteCodes($user_id = null, $sort_codes = false)
 
     //no codes
 	if(empty($codes))
-		return false;	
-	
+		return false;
+
     //return unsorted codes unless specified otherwise
     if(!$sort_codes)
         return $codes;
-	
+
     //sort codes
     $unused_codes = array();
     $used_codes = array();
 	$code_count = array();
-	
+
 	//figure out used codes
 	foreach($codes as $code)
     {
@@ -105,7 +105,7 @@ function pmproio_getInviteCodes($user_id = null, $sort_codes = false)
 		else
 			$code_count[$code]++;
     }
-	
+
 	//figure out unused codes
 	$unused_codes = $codes;
 	if(PMPROIO_CODES_USES != false)
@@ -127,7 +127,7 @@ function pmproio_getInviteCodes($user_id = null, $sort_codes = false)
 function pmproio_saveInviteCodes($new_codes, $user_id = null)
 {
 	global $current_user;
-	
+
     if(empty($user_id))
         $user_id = $current_user->ID;
 
@@ -167,25 +167,25 @@ function pmproio_createInviteCodes($user_id = null, $admin_override = false, $ad
     $new_codes = array();
 
     //use constant or default to 1 code if not set
-    
+
 	if($admin_override && current_user_can("manage_options"))
 	{
 		$quantity = $admin_quantity;
 	}
-    
+
 	else	if(defined('PMPROIO_CODES'))
 		$quantity = PMPROIO_CODES;
 	else
 		$quantity = 1;
-    
+
 	//how many do we need to make?
 	$quantity = $quantity - count($old_codes);
-	
-	
+
+
 	if($quantity > 0)
-	{	
-		for($i=0; $i<$quantity; $i++) 
-		{	
+	{
+		for($i=0; $i<$quantity; $i++)
+		{
 			//user_id part of code for easy searching later
 			$id_part = str_pad(dechex($user_id), 4, '0', STR_PAD_LEFT);
 
@@ -204,7 +204,7 @@ function pmproio_createInviteCodes($user_id = null, $admin_override = false, $ad
 			$new_codes[] = $code;
 		}
 	}
-	
+
 	return $new_codes;
 }
 
@@ -212,14 +212,14 @@ function pmproio_createInviteCodes($user_id = null, $admin_override = false, $ad
 function pmproio_checkInviteCode($invite_code)
 {
     global $wpdb;
-    
+
 	//check for user from code
     $user_id = pmproio_getUserFromInviteCode($invite_code);
 
 	//no user? not a real code
 	if(empty($user_id))
 		return false;
-	
+
     //only valid if user still has membership, but allow filter
     if(pmpro_hasMembershipLevel(0, $user_id) && apply_filters('pmproio_check_user', true))
         return false;
@@ -233,12 +233,12 @@ function pmproio_checkInviteCode($invite_code)
     if(PMPROIO_CODES_USES)
 	{
 		$used = $wpdb->get_var("SELECT COUNT(user_id) FROM " . $wpdb->usermeta . " WHERE meta_key LIKE 'pmpro_invite_code_at_signup' AND meta_value LIKE '" . esc_sql($invite_code) . "'");
-	
+
 		//valid if we didn't hit use limit yet
 		if(!empty($used) && $used >= PMPROIO_CODES_USES)
 			return false;
-	}	
-	
+	}
+
 	//got here, must be valid
     return true;
 }
@@ -257,9 +257,9 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 
     if(empty($user_id))
         $user_id = $current_user->ID;
-    
+
     $codes = pmproio_getInviteCodes($user_id, true);
-    	
+
     if(empty($codes))
         return false;
 
@@ -279,9 +279,9 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 			<?php
 		}
     }
-	
+
     if(!empty($used))
-    { 
+    {
 		//figure out if codes have been used
 		if(!empty($codes['used']))
 		{
@@ -298,11 +298,11 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 			_e('None of your codes have been used.','pmpro_invite_only');
 		}
 		else
-		{	
+		{
 			?>
             <table class="used_codes widefat striped">
                 <thead>
-                <tr>                    
+                <tr>
                     <th><?php _e('Member','pmpro_invite_only'); ?></th>
 					<th><?php _e('Invite Code','pmpro_invite_only'); ?></th>
                 </tr>
@@ -324,19 +324,19 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 									$userlink = "<a href=" . add_query_arg('user_id', $user_id, admin_url('user-edit.php')) . ">" . $display_name . "</a>";
 							}
 							?>
-							<tr>								
+							<tr>
 								<td>
 									<?php
 									if(!empty($userlink))
 										echo $userlink;
 									else
-										echo $display_name; 
+										echo $display_name;
 									?>
 								</td>
 								<td><?php echo $code; ?></td>
 							</tr><?php
 						}
-					} 
+					}
 				?>
                 </tbody>
             </table><?php
@@ -355,7 +355,7 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 */
 function pmproio_pmpro_checkout_boxes()
 {
-	global $pmpro_level, $current_user, $pmpro_review;	
+	global $pmpro_level, $current_user, $pmpro_review;
 	if(pmproio_isInviteLevel($pmpro_level->id))
 	{
 		if(!empty($_REQUEST['invite_code']))
@@ -440,7 +440,7 @@ function pmproio_pmpro_after_checkout($user_id)
 	$level_id = intval($_REQUEST['level']);
 
 	if(pmproio_isInviteLevel($level_id))
-	{		
+	{
 		//look for code
 		if(!empty($_REQUEST['invite_code']))
 			$invite_code = $_REQUEST['invite_code'];
@@ -448,12 +448,12 @@ function pmproio_pmpro_after_checkout($user_id)
 			$invite_code = $_SESSION['invite_code'];
 		else
 			$invite_code = false;
-		
-		//update code used				
+
+		//update code used
 		if(!empty($invite_code))
 			update_user_meta($user_id, "pmpro_invite_code_at_signup", $invite_code);
 	}
-	
+
 	//delete any session var
 	if(!empty($_SESSION['invite_code']))
 		unset($_SESSION['invite_code']);
@@ -505,7 +505,7 @@ function pmproio_pmpro_confirmation_message($message)
         {
 			$message .= "<div class=\"pmpro_message pmpro_alert\"><h3>" . __('Your Invite Codes','pmpro_invite_only') . "</h3>";
 			$message .= "<p>" . __('Give these codes to your invited members to use at checkout', 'pmpro_invite_only') . "</p>";
-		}        
+		}
 		$message .= pmproio_displayInviteCodes($current_user->ID);
         $message .= "</div>";
     }
@@ -518,9 +518,9 @@ add_filter("pmpro_confirmation_message", "pmproio_pmpro_confirmation_message");
 	Show invite code fields on edit profile page for admins.
 */
 function pmproio_show_extra_profile_fields($user)
-{	
-	if(current_user_can('manage_options')) 
-	{ 
+{
+	if(current_user_can('manage_options'))
+	{
 		?>
 		<hr />
 		<h2><?php _e('Invite Codes', 'pmpro_invite_only');?></h2>
@@ -530,17 +530,27 @@ function pmproio_show_extra_profile_fields($user)
 		<hr />
 		<h4><?php _e('Used Invite Codes', 'pmpro_invite_only');?></h4>
 		<?php echo pmproio_displayInviteCodes($user->ID, false, true); ?>
-		<hr />			
-		<table class="form-table">	
+		<hr />
+		<table class="form-table">
 			<tr>
 				<th><?php _e('Invite Code Used at Signup', 'pmpro_invite_only');?></th>
 				<td>
-					<?php 
+					<?php
 						$invite_code_used = $user->pmpro_invite_code_at_signup;
-						if(empty($invite_code_used))
+						if(empty($invite_code_used)) {
 							echo "N/A";
-						else
-							echo $invite_code_used;
+						}
+						else {
+							$user_id = pmproio_getUserFromInviteCode($invite_code_used);
+							$user_info = get_userdata($user_id);
+
+							if (false !== $user_info) {
+								echo sprintf("%s (%s)", $invite_code_used, $user_info->display_name);
+							}
+							else {
+								echo $invite_code_used;
+							}
+						}
 					?>
 				</td>
 			</tr>
@@ -553,16 +563,16 @@ add_action( 'show_user_profile', 'pmproio_show_extra_profile_fields' );
 add_action( 'edit_user_profile', 'pmproio_show_extra_profile_fields' );
 
 //save them
-function pmproio_save_extra_profile_fields( $user_id ) 
+function pmproio_save_extra_profile_fields( $user_id )
 {
 	if ( !current_user_can( 'edit_user', $user_id ) )
 		return false;
- 
+
 	if(!empty($_POST['invite_code']))
 		update_user_meta($user_id, "pmpro_invite_code", $_POST['invite_code']);
-	
+
 	$invites_to_add = intval($_POST['pmpro_add_invites'], 10);
-	
+
 	if(!empty($_POST['pmpro_add_invites']) && $invites_to_add > 0 && current_user_can("manage_options"))
 	{
 		$codes = pmproio_createInviteCodes($user_id, true, $invites_to_add);
@@ -588,7 +598,7 @@ function pmproio_the_content_account_page($content)
 
         ob_start();
         ?>
-        <div id="pmproio_codes" class="pmpro_box clear">					
+        <div id="pmproio_codes" class="pmpro_box clear">
 			<?php if(count($codes) == 1) { ?>
 				<h2><?php _e('Invite Code', 'pmpro_invite_only'); ?></h2>
 				<p><?php _e('Give this code to your invited member to use at checkout', 'pmpro_invite_only'); ?></p>
@@ -600,7 +610,7 @@ function pmproio_the_content_account_page($content)
 			<h4><?php _e('Used Invite Codes', 'pmpro_invite_only'); ?></h4>
 			<?php echo pmproio_displayInviteCodes($current_user->ID, false, true);?>
 		</div>
-		<?php			
+		<?php
         $temp_content = ob_get_contents();
         ob_end_clean();
         $content = str_replace('<!-- end pmpro_account-profile -->', '<!-- end pmpro_account-profile -->' . $temp_content, $content);
@@ -613,18 +623,19 @@ add_filter('the_content', 'pmproio_the_content_account_page', 20, 1);
 	Add invite code to confirmation emails.
 */
 function pmproio_pmpro_email_body($body, $email)
-{		
+{
 	if(strpos($email->template, "checkout") !== false && strpos($email->template, "debug") === false)
 	{
 		$user = get_user_by("login", $email->data['user_login']);
-		$code = get_user_meta($user->ID, "pmpro_invite_code", true);				
-		
+		$code = get_user_meta($user->ID, "pmpro_invite_code", true);
+		$code = implode(', ', $code);
+
 		if(!empty($code))
 		{
 			$body = str_replace("<p>Account:", "<p>Give this invite code to others to use at checkout: <strong>$code</strong></p><p>Account:", $body);
 		}
 	}
-		
+
 	return $body;
 }
 add_filter("pmpro_email_body", "pmproio_pmpro_email_body", 10, 2);
