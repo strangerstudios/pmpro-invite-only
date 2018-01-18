@@ -34,7 +34,9 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 
 == Changelog ==
 = .3.4 =
-* BUG: Fixed display of invite codes in emails.
+* BUG FIX: Fixed display of invite codes in emails.
+* BUG FIX: When a user was assigned multiple invite codes, they were not displayed in the email body (array output as string). (Thanks, Matt Sims)
+* ENHANCEMENT: Added the display name of the original recipient of a used invite code on the user profile screen. (Thanks, Matt Sims)
 
 = .3.3 =
 * BUG: Fixed bug where used codes were counted incorrectly.
