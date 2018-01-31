@@ -9,9 +9,6 @@ jQuery(document).ready( function( $ ) {
             this.code_uses_row = this.code_uses.closest( 'tr.pmproio-settings-row');
             this.code_count_row = this.code_count.closest( 'tr.pmproio-settings-row');
 
-            this.code_uses_row.hide();
-            this.code_count_row.hide();
-
             var self = this;
 
             self.user_required.unbind('click').on('click', function() {
