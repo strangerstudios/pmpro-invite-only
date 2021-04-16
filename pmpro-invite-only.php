@@ -170,17 +170,25 @@ function pmproio_createInviteCodes($user_id = null, $admin_override = false, $ad
         $old_codes = array();
     $new_codes = array();
 
-    //use constant or default to 1 code if not set
+    //level ID for filter pmproio_number_of_invite_codes
+	$level_id = null;
 
-	if($admin_override && current_user_can("manage_options"))
-	{
-		$quantity = $admin_quantity;
+	//get level ID
+	global $pmpro_level;
+	if ( ! empty( $pmpro_level ) && is_object( $pmpro_level ) ) {
+		$level_id = intval( $pmpro_level->id );
 	}
 
-	else	if(defined('PMPROIO_CODES'))
+    //use constant or default to 1 code if not set
+	if ( $admin_override && current_user_can( 'manage_options' ) ) {
+		$quantity = $admin_quantity;
+	} elseif ( defined( 'PMPROIO_CODES' ) ) {
 		$quantity = PMPROIO_CODES;
-	else
+		$quantity = apply_filters( 'pmproio_number_of_invite_codes', $quantity, $level_id );
+	} else {
 		$quantity = 1;
+		$quantity = apply_filters( 'pmproio_number_of_invite_codes', $quantity, $level_id );
+	}
 
 	//how many do we need to make?
 	$quantity = $quantity - count($old_codes);
