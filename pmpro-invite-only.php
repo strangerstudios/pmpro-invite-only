@@ -21,7 +21,7 @@ Author URI: http://www.strangerstudios.com
 
 	global $pmproio_invite_given_levels;
 	$pmproio_invite_given_levels = array(1);	//defaults to $pmproio_invite_required_levels
-	
+
 	Set the number of invite codes to be created at checkout (and maximum a user can get without admin intervention)
 	define('PMPROIO_CODES', 10);	//defaults to 1
 
@@ -166,25 +166,43 @@ function pmproio_createInviteCodes($user_id = null, $admin_override = false, $ad
 
     //get old codes
     $old_codes = pmproio_getInviteCodes($user_id);
-    if(empty($old_codes))
-        $old_codes = array();
-    $new_codes = array();
 
-    //use constant or default to 1 code if not set
-
-	if($admin_override && current_user_can("manage_options"))
-	{
-		$quantity = $admin_quantity;
+	if ( empty( $old_codes ) ) {
+		$old_codes = array();
 	}
 
-	else	if(defined('PMPROIO_CODES'))
-		$quantity = PMPROIO_CODES;
-	else
-		$quantity = 1;
+	$new_codes = array();
+
+	// Use constant or default to 1 code if not set.
+	if ( $admin_override && current_user_can( 'manage_options' ) ) {
+		$quantity = $admin_quantity;
+	} else {
+		// Get the level ID for use with the filter.
+		$level_id = null;
+
+		// Get the level ID.
+		global $pmpro_level;
+
+		if ( ! empty( $pmpro_level ) && is_object( $pmpro_level ) ) {
+			$level_id = (int) $pmpro_level->id;
+		}
+
+		$quantity = defined( 'PMPROIO_CODES' ) ? (int) PMPROIO_CODES : 1;
+
+		/**
+		 * Allow filtering the number of invite codes to allow.
+		 *
+		 * @since TBD
+		 *
+		 * @param int      $quantity The number of invite codes to allow.
+		 * @param int      $user_id  The user ID the codes are being created for.
+		 * @param int|null $level_id The level ID of the user or null if not found.
+		 */
+		$quantity = (int) apply_filters( 'pmproio_number_of_invite_codes', $quantity, $user_id, $level_id );
+	}
 
 	//how many do we need to make?
 	$quantity = $quantity - count($old_codes);
-
 
 	if($quantity > 0)
 	{
