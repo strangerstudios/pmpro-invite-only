@@ -167,17 +167,17 @@ function pmproio_createInviteCodes($user_id = null, $admin_override = false, $ad
     //get old codes
     $old_codes = pmproio_getInviteCodes($user_id);
 
-    if ( empty( $old_codes ) ) {
-        $old_codes = array();
-    }
+	if ( empty( $old_codes ) ) {
+		$old_codes = array();
+	}
 
-    $new_codes = array();
+	$new_codes = array();
 
 	// Use constant or default to 1 code if not set.
 	if ( $admin_override && current_user_can( 'manage_options' ) ) {
 		$quantity = $admin_quantity;
 	} else {
-   		// Get the level ID for use with the filter.
+		// Get the level ID for use with the filter.
 		$level_id = null;
 
 		// Get the level ID.
