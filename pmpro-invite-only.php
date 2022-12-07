@@ -293,7 +293,7 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 				if(!empty($user_ids))
 				{
 					$codes_used = true;
-					break;
+					return;
 				}
 		}
 
