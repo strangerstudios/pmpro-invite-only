@@ -2,7 +2,7 @@
 Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, membership, invite
 Requires at least: 3.5
-Tested up to: 4.9.2
+Tested up to: 6.2
 Stable tag: .3.4
 
 Specify membership level(s) as "invite only" and provide members with invite codes to share after checkout.
