@@ -438,10 +438,10 @@ function pmproio_pmpro_after_change_membership_level($level_id, $user_id)
 add_action("pmpro_after_change_membership_level", "pmproio_pmpro_after_change_membership_level", 10, 2);
 
 //at checkout
-function pmproio_pmpro_after_checkout($user_id)
+function pmproio_pmpro_after_checkout( $user_id, $order )
 {
 	//get level
-	$level_id = intval($_REQUEST['level']);
+	$level_id = intval( $order->membership_id );
 
 	if(pmproio_isInviteLevel($level_id))
 	{
