@@ -593,7 +593,7 @@ function pmproio_the_content_account_page($content)
 {
     global $current_user, $pmpro_pages, $post;
 
-    if(!empty($current_user->ID) && $post->ID == $pmpro_pages['account'])
+    if(!empty($current_user->ID) && ! empty( $post ) && $post->ID == $pmpro_pages['account'])
     {
     	//make sure they have codes
     	$codes = pmproio_getInviteCodes($current_user->ID);
