@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, membership, invite
 Requires at least: 3.5
-Tested up to: 6.2
-Stable tag: .3.4
+Tested up to: 6.3
+Stable tag: 0.3.5
 
 Specify membership level(s) as "invite only" and provide members with invite codes to share after checkout.
 
@@ -33,6 +33,13 @@ Note: this plugin requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-invite-only/issues
 
 == Changelog ==
+= 0.3.5 - 2023-08-21 =
+* ENHANCEMENT: Updating `<h3>` tags to `<h2>` tags for better accessibility. #27 (@michaelbeil)
+* BUG FIX/ENHANCEMENT: Improved compatibility with PMPro Multiple Memberships Per User Add On. #22 (@dparker1005)
+* BUG FIX/ENHANCEMENT: Updated localization and escaping of strings. #28 (@dparker1005)
+* BUG FIX: Fixes PHP error that gets thrown on archive pages. #24 (@JarrydLong)
+* REFACTOR: No longer pulling level from `$_REQUEST` variable. #26 (@dparker1005)
+
 = .3.4 =
 * BUG FIX: Fixed display of invite codes in emails.
 * BUG FIX: When a user was assigned multiple invite codes, they were not displayed in the email body (array output as string). (Thanks, Matt Sims)
