@@ -502,12 +502,12 @@ function pmproio_pmpro_confirmation_message( $message, $order )
     {
         if(count($codes) == 1)
 		{
-        	$message .= "<div class=\"pmpro_message pmpro_alert\"><h3>" . __('Your Invite Code','pmpro_invite_only') . "</h3>";
+        	$message .= "<div class=\"pmpro_message pmpro_alert\"><h2>" . __('Your Invite Code','pmpro_invite_only') . "</h2>";
 			$message .= "<p>" . __('Give this code to your invited member to use at checkout', 'pmpro_invite_only') . "</p>";
 		}
         else
         {
-			$message .= "<div class=\"pmpro_message pmpro_alert\"><h3>" . __('Your Invite Codes','pmpro_invite_only') . "</h3>";
+			$message .= "<div class=\"pmpro_message pmpro_alert\"><h2>" . __('Your Invite Codes','pmpro_invite_only') . "</h2>";
 			$message .= "<p>" . __('Give these codes to your invited members to use at checkout', 'pmpro_invite_only') . "</p>";
 		}
 		$message .= pmproio_displayInviteCodes($current_user->ID);
