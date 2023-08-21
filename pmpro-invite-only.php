@@ -492,13 +492,13 @@ add_filter('pmpro_wp_new_user_notification', 'pmproio_pmpro_wp_new_user_notifica
 /*
 	Show invite codes on confirmation and account pages
 */
-function pmproio_pmpro_confirmation_message($message)
+function pmproio_pmpro_confirmation_message( $message, $order )
 {
 	global $current_user;
 
 	$codes = pmproio_getInviteCodes($current_user->ID);
 
-    if(!empty($codes) && pmproio_isInviteGivenLevel($current_user->membership_level->id))
+    if(!empty($codes) && ! empty( $order ) && pmproio_isInviteGivenLevel( $order->membership_id ) )
     {
         if(count($codes) == 1)
 		{
@@ -516,7 +516,7 @@ function pmproio_pmpro_confirmation_message($message)
 
     return $message;
 }
-add_filter("pmpro_confirmation_message", "pmproio_pmpro_confirmation_message");
+add_filter("pmpro_confirmation_message", "pmproio_pmpro_confirmation_message", 10, 2);
 
 /*
 	Show invite code fields on edit profile page for admins.
