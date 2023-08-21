@@ -589,41 +589,36 @@ add_action( 'edit_user_profile_update', 'pmproio_save_extra_profile_fields' );
 /*
 	Show an invite code on the account page.
 */
-function pmproio_the_content_account_page( $content ) {
+function pmproio_the_content_account_page($content)
+{
+    global $current_user, $pmpro_pages, $post;
 
-	if ( is_singular() && in_the_loop() && is_main_query() ) {
-			
-		global $current_user, $pmpro_pages, $post;
+    if(!empty($current_user->ID) && ! empty( $post ) && $post->ID == $pmpro_pages['account'])
+    {
+    	//make sure they have codes
+    	$codes = pmproio_getInviteCodes($current_user->ID);
+        if(empty($codes))
+        	return $content;
 
-		if(!empty($current_user->ID) && $post->ID == $pmpro_pages['account'])
-		{
-			//make sure they have codes
-			$codes = pmproio_getInviteCodes($current_user->ID);
-			if(empty($codes))
-				return $content;
-
-			ob_start();
-			?>
-			<div id="pmproio_codes" class="pmpro_box clear">
-				<?php if(count($codes) == 1) { ?>
-					<h2><?php _e('Invite Code', 'pmpro_invite_only'); ?></h2>
-					<p><?php _e('Give this code to your invited member to use at checkout', 'pmpro_invite_only'); ?></p>
-				<?php } else { ?>
-					<h2><?php _e('Invite Codes', 'pmpro_invite_only'); ?></h2>
-					<p><?php _e('Give these codes to your invited members to use at checkout', 'pmpro_invite_only'); ?></p>
-				<?php } ?>
-				<?php echo pmproio_displayInviteCodes(); ?>
-				<h4><?php _e('Used Invite Codes', 'pmpro_invite_only'); ?></h4>
-				<?php echo pmproio_displayInviteCodes($current_user->ID, false, true);?>
-			</div>
-			<?php
-			$temp_content = ob_get_contents();
-			ob_end_clean();
-			$content = str_replace('<!-- end pmpro_account-profile -->', '<!-- end pmpro_account-profile -->' . $temp_content, $content);
-		}
-
-	}
-	
+        ob_start();
+        ?>
+        <div id="pmproio_codes" class="pmpro_box clear">
+			<?php if(count($codes) == 1) { ?>
+				<h2><?php _e('Invite Code', 'pmpro_invite_only'); ?></h2>
+				<p><?php _e('Give this code to your invited member to use at checkout', 'pmpro_invite_only'); ?></p>
+			<?php } else { ?>
+				<h2><?php _e('Invite Codes', 'pmpro_invite_only'); ?></h2>
+				<p><?php _e('Give these codes to your invited members to use at checkout', 'pmpro_invite_only'); ?></p>
+			<?php } ?>
+			<?php echo pmproio_displayInviteCodes(); ?>
+			<h4><?php _e('Used Invite Codes', 'pmpro_invite_only'); ?></h4>
+			<?php echo pmproio_displayInviteCodes($current_user->ID, false, true);?>
+		</div>
+		<?php
+        $temp_content = ob_get_contents();
+        ob_end_clean();
+        $content = str_replace('<!-- end pmpro_account-profile -->', '<!-- end pmpro_account-profile -->' . $temp_content, $content);
+    }
     return $content;
 }
 add_filter('the_content', 'pmproio_the_content_account_page', 20, 1);
