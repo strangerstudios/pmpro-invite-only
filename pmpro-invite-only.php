@@ -438,13 +438,12 @@ function pmproio_pmpro_after_change_membership_level($level_id, $user_id)
 add_action("pmpro_after_change_membership_level", "pmproio_pmpro_after_change_membership_level", 10, 2);
 
 //at checkout
-function pmproio_pmpro_after_checkout( $user_id, $order )
+function pmproio_pmpro_after_checkout( $user_id )
 {
 	//get level
-	$level_id = intval( $order->membership_id );
+	$level = pmpro_getLevelAtCheckout();
 
-	if(pmproio_isInviteLevel($level_id))
-	{
+	if ( ! empty( $level ) && pmproio_isInviteLevel( $level->id ) ) {
 		//look for code
 		if(!empty($_REQUEST['invite_code']))
 			$invite_code = $_REQUEST['invite_code'];
@@ -462,7 +461,7 @@ function pmproio_pmpro_after_checkout( $user_id, $order )
 	if(!empty($_SESSION['invite_code']))
 		unset($_SESSION['invite_code']);
 }
-add_action("pmpro_after_checkout", "pmproio_pmpro_after_checkout", 10, 2);
+add_action("pmpro_after_checkout", "pmproio_pmpro_after_checkout", 10, 1);
 
 /*
 	Save invite code while at PayPal
@@ -492,13 +491,15 @@ add_filter('pmpro_wp_new_user_notification', 'pmproio_pmpro_wp_new_user_notifica
 /*
 	Show invite codes on confirmation and account pages
 */
-function pmproio_pmpro_confirmation_message( $message, $order )
+function pmproio_pmpro_confirmation_message( $message )
 {
 	global $current_user;
 
 	$codes = pmproio_getInviteCodes($current_user->ID);
 
-    if(!empty($codes) && ! empty( $order ) && pmproio_isInviteGivenLevel( $order->membership_id ) )
+	$level = pmpro_getLevelAtCheckout();
+
+    if(!empty($codes) && ! empty( $level ) && pmproio_isInviteGivenLevel( $level->id ) )
     {
         if(count($codes) == 1)
 		{
@@ -516,7 +517,7 @@ function pmproio_pmpro_confirmation_message( $message, $order )
 
     return $message;
 }
-add_filter("pmpro_confirmation_message", "pmproio_pmpro_confirmation_message", 10, 2);
+add_filter("pmpro_confirmation_message", "pmproio_pmpro_confirmation_message", 10, 1);
 
 /*
 	Show invite code fields on edit profile page for admins.
