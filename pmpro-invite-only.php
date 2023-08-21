@@ -6,6 +6,8 @@ Description: Users must have an invite code to sign up for certain levels. Users
 Version: .3.4
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
+Text Domain: pmpro-invite-only
+Domain Path: /languages
 */
 
 /*
@@ -51,6 +53,14 @@ function pmproio_init_defaults()
 		define('PMPROIO_CODES_USES', false);
 }
 add_action('init', 'pmproio_init_defaults', 99);
+
+/**
+ * Load plugin textdomain.
+ */
+function pmproio_load_plugin_text_domain() {
+	load_plugin_textdomain( 'pmpro-invite-only', false, basename( dirname( __FILE__ ) ) . '/languages' ); 
+}
+add_action( 'plugins_loaded', 'pmproio_load_plugin_text_domain');
 
 //check if a level id requires an invite code or should generate one
 function pmproio_isInviteLevel($level_id)
@@ -273,7 +283,7 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
     if(!empty($unused))
     {
 		if(empty($codes['unused']))
-			esc_html__('All codes have been used.','pmpro_invite_only');
+			esc_html__('All codes have been used.','pmpro-invite-only');
 		else
 		{
 			?>
@@ -299,7 +309,7 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 
 		if(empty($codes_used))
 		{
-			esc_html_e('None of your codes have been used.','pmpro_invite_only');
+			esc_html_e('None of your codes have been used.','pmpro-invite-only');
 		}
 		else
 		{
@@ -307,8 +317,8 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
             <table class="used_codes widefat striped">
                 <thead>
                 <tr>
-                    <th><?php esc_html_e('Member','pmpro_invite_only'); ?></th>
-					<th><?php esc_html_e('Invite Code','pmpro_invite_only'); ?></th>
+                    <th><?php esc_html_e('Member','pmpro-invite-only'); ?></th>
+					<th><?php esc_html_e('Invite Code','pmpro-invite-only'); ?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -320,7 +330,7 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 							$display_name = get_userdata($user_id)->display_name;
 							if(empty($display_name))
 							{
-								$display_name = esc_html__( 'N/A (Deleted or abandoned.', 'pmpro_invite_only' );
+								$display_name = esc_html__( 'N/A (Deleted or abandoned.', 'pmpro-invite-only' );
 							}
 							else
 							{
@@ -377,13 +387,13 @@ function pmproio_pmpro_checkout_boxes()
 		<table class="pmpro_checkout top1em" width="100%" cellpadding="0" cellspacing="0" border="0">
 			<thead>
 				<tr>
-					<th><?php _e('Invite Code', 'pmpro_invite_only');?></th>
+					<th><?php _e('Invite Code', 'pmpro-invite-only');?></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<td>
-						<label for="invite_code"><?php esc_html_e('Invite Code', 'pmpro_invite_only');?></label>
+						<label for="invite_code"><?php esc_html_e('Invite Code', 'pmpro-invite-only');?></label>
 						<input id="invite_code" name="invite_code" type="text" class="input <?php echo esc_attr( pmpro_getClassForField("invite_code") );?>" size="20" value="<?php echo esc_attr( $invite_code );?>" />
 						<span class="pmpro_asterisk"> *</span>
 					</td>
@@ -413,7 +423,7 @@ function pmproio_pmpro_registration_checks($okay)
 
 		if(empty($invite_code) || empty($real))
 		{
-			pmpro_setMessage( esc_html__( 'An invite code is required for this level. Please enter a valid invite code.', 'pmpro_invite_only' ), 'pmpro_error' );
+			pmpro_setMessage( esc_html__( 'An invite code is required for this level. Please enter a valid invite code.', 'pmpro-invite-only' ), 'pmpro_error' );
 			$pmpro_error_fields[] = "invite_code";
 		}
 	}
@@ -503,13 +513,13 @@ function pmproio_pmpro_confirmation_message( $message )
     {
         if(count($codes) == 1)
 		{
-        	$message .= "<div class=\"pmpro_message pmpro_alert\"><h2>" . esc_html__('Your Invite Code','pmpro_invite_only') . "</h2>";
-			$message .= "<p>" . esc_html__('Give this code to your invited member to use at checkout', 'pmpro_invite_only') . "</p>";
+        	$message .= "<div class=\"pmpro_message pmpro_alert\"><h2>" . esc_html__('Your Invite Code','pmpro-invite-only') . "</h2>";
+			$message .= "<p>" . esc_html__('Give this code to your invited member to use at checkout', 'pmpro-invite-only') . "</p>";
 		}
         else
         {
-			$message .= "<div class=\"pmpro_message pmpro_alert\"><h2>" . esc_html__('Your Invite Codes','pmpro_invite_only') . "</h2>";
-			$message .= "<p>" . esc_html__('Give these codes to your invited members to use at checkout', 'pmpro_invite_only') . "</p>";
+			$message .= "<div class=\"pmpro_message pmpro_alert\"><h2>" . esc_html__('Your Invite Codes','pmpro-invite-only') . "</h2>";
+			$message .= "<p>" . esc_html__('Give these codes to your invited members to use at checkout', 'pmpro-invite-only') . "</p>";
 		}
 		$message .= pmproio_displayInviteCodes($current_user->ID);
         $message .= "</div>";
@@ -528,17 +538,17 @@ function pmproio_show_extra_profile_fields($user)
 	{
 		?>
 		<hr />
-		<h2><?php esc_html_e('Invite Codes', 'pmpro_invite_only');?></h2>
-		<h4><?php esc_html_e('Available Invite Codes', 'pmpro_invite_only');?></h4>
+		<h2><?php esc_html_e('Invite Codes', 'pmpro-invite-only');?></h2>
+		<h4><?php esc_html_e('Available Invite Codes', 'pmpro-invite-only');?></h4>
 		<?php echo pmproio_displayInviteCodes($user->ID);?>
-		<p><?php esc_html_e('Increase total available invites to', 'pmpro_invite_only'); ?> <input type="text" size="4" name="pmpro_add_invites" id="pmpro_add_invites" value="" /></p>
+		<p><?php esc_html_e('Increase total available invites to', 'pmpro-invite-only'); ?> <input type="text" size="4" name="pmpro_add_invites" id="pmpro_add_invites" value="" /></p>
 		<hr />
-		<h4><?php esc_html_e('Used Invite Codes', 'pmpro_invite_only');?></h4>
+		<h4><?php esc_html_e('Used Invite Codes', 'pmpro-invite-only');?></h4>
 		<?php echo pmproio_displayInviteCodes($user->ID, false, true); ?>
 		<hr />
 		<table class="form-table">
 			<tr>
-				<th><?php esc_html_e('Invite Code Used at Signup', 'pmpro_invite_only');?></th>
+				<th><?php esc_html_e('Invite Code Used at Signup', 'pmpro-invite-only');?></th>
 				<td>
 					<?php
 						$invite_code_used = $user->pmpro_invite_code_at_signup;
@@ -605,14 +615,14 @@ function pmproio_the_content_account_page($content)
         ?>
         <div id="pmproio_codes" class="pmpro_box clear">
 			<?php if(count($codes) == 1) { ?>
-				<h2><?php esc_html_e('Invite Code', 'pmpro_invite_only'); ?></h2>
-				<p><?php esc_html_e('Give this code to your invited member to use at checkout', 'pmpro_invite_only'); ?></p>
+				<h2><?php esc_html_e('Invite Code', 'pmpro-invite-only'); ?></h2>
+				<p><?php esc_html_e('Give this code to your invited member to use at checkout', 'pmpro-invite-only'); ?></p>
 			<?php } else { ?>
-				<h2><?php esc_html_e('Invite Codes', 'pmpro_invite_only'); ?></h2>
-				<p><?php esc_html_e('Give these codes to your invited members to use at checkout', 'pmpro_invite_only'); ?></p>
+				<h2><?php esc_html_e('Invite Codes', 'pmpro-invite-only'); ?></h2>
+				<p><?php esc_html_e('Give these codes to your invited members to use at checkout', 'pmpro-invite-only'); ?></p>
 			<?php } ?>
 			<?php echo pmproio_displayInviteCodes(); ?>
-			<h4><?php esc_html_e('Used Invite Codes', 'pmpro_invite_only'); ?></h4>
+			<h4><?php esc_html_e('Used Invite Codes', 'pmpro-invite-only'); ?></h4>
 			<?php echo pmproio_displayInviteCodes($current_user->ID, false, true);?>
 		</div>
 		<?php
