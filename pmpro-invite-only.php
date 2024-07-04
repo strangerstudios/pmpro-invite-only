@@ -381,25 +381,27 @@ function pmproio_pmpro_checkout_boxes()
 		else
 			$invite_code = "";
 
-		if(empty($pmpro_review))
-		{
+		if( empty( $pmpro_review ) ) {
 		?>
-		<table class="pmpro_checkout top1em" width="100%" cellpadding="0" cellspacing="0" border="0">
-			<thead>
-				<tr>
-					<th><?php _e('Invite Code', 'pmpro-invite-only');?></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>
-						<label for="invite_code"><?php esc_html_e('Invite Code', 'pmpro-invite-only');?></label>
-						<input id="invite_code" name="invite_code" type="text" class="input <?php echo esc_attr( pmpro_getClassForField("invite_code") );?>" size="20" value="<?php echo esc_attr( $invite_code );?>" />
-						<span class="pmpro_asterisk"> *</span>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<fieldset id="pmproio_form_fieldset" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset', 'pmproio_form_fieldset' ) ); ?>">
+			<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card' ) ); ?>">
+				<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ); ?>">
+					<legend class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_legend' ) ); ?>">
+						<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_heading pmpro_font-large' ) ); ?>">
+							<?php esc_html_e('Invite Code','pmpro-invite-only'); ?>
+						</h2>
+					</legend>
+					<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields' ) ); ?>">
+						<label for="invite_code" class=<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>><?php esc_html_e( 'Invite Code', 'pmpro-invite-only' );?>
+							<span class=<?php echo esc_attr( pmpro_get_element_class( 'pmpro_asterisk') ); ?>>
+								<abbr title="<?php esc_attr_e( 'Required Field' ,'pmpro-invite-only' ); ?>">*</abbr>
+							</span>
+						</label>
+						<input id="invite_code" name="invite_code" type="text" class="input <?php echo esc_attr( pmpro_get_element_class( 'invite_code', 'pmpro_form_input' ) ); ?>" size="20" value="<?php echo esc_attr( $invite_code );?>" />
+					</div>
+				</div>
+			</div>
+		</fieldset>
 		<?php
 		}
 	}
@@ -498,36 +500,49 @@ function pmproio_pmpro_wp_new_user_notification($notify, $user_id)
 }
 add_filter('pmpro_wp_new_user_notification', 'pmproio_pmpro_wp_new_user_notification', 10, 2);
 
-/*
-	Show invite codes on confirmation and account pages
-*/
-function pmproio_pmpro_confirmation_message( $message )
-{
+/**
+ *  Display invite codes on the confirmation page.
+ *
+ * @param string $message  The confirmation message.
+ * @return string $message filtered with invite codes added.
+ * @since TBD
+ */
+function pmproio_pmpro_confirmation_message( $message ) {
 	global $current_user;
-
-	$codes = pmproio_getInviteCodes($current_user->ID);
-
+	$codes = pmproio_getInviteCodes( $current_user->ID );
 	$level = pmpro_getLevelAtCheckout();
-
-    if(!empty($codes) && ! empty( $level ) && pmproio_isInviteGivenLevel( $level->id ) )
-    {
-        if(count($codes) == 1)
-		{
-        	$message .= "<div class=\"pmpro_message pmpro_alert\"><h2>" . esc_html__('Your Invite Code','pmpro-invite-only') . "</h2>";
-			$message .= "<p>" . esc_html__('Give this code to your invited member to use at checkout', 'pmpro-invite-only') . "</p>";
-		}
-        else
-        {
-			$message .= "<div class=\"pmpro_message pmpro_alert\"><h2>" . esc_html__('Your Invite Codes','pmpro-invite-only') . "</h2>";
-			$message .= "<p>" . esc_html__('Give these codes to your invited members to use at checkout', 'pmpro-invite-only') . "</p>";
-		}
-		$message .= pmproio_displayInviteCodes($current_user->ID);
-        $message .= "</div>";
-    }
-
-    return $message;
+	//Bail if no codes or level
+	if( empty( $codes ) || empty( $level ) ) {
+		return $message;
+	}
+	$title = 'Your Invite Code';
+	$text = 'Give this code to your invited member to use at checkout';
+	if ( count( $codes ) > 1 ) {
+		$title = 'Your Invite Codes';
+		$text = 'Give these codes to your invited members to use at checkout';
+	}
+	//Add pmpro_card div
+	$message .= '<div class="' . pmpro_get_element_class( 'pmpro_user_fields pmpro_form' ) . '">';
+		$message .= '<div class="' . pmpro_get_element_class( 'pmpro_card' ) . '">';
+			$message .= '<div class="' . pmpro_get_element_class( 'pmpro_card_content' ) . '">';
+				$message .= '<legend class="' . pmpro_get_element_class( 'pmpro_form_legend' ) . '">';
+					//Add title
+					$message .= '<h2 class="' . pmpro_get_element_class( 'pmpro_form_heading  pmpro_font-large' ) . '">' . esc_html( sprintf( __( '%s', 'pmpro-invite-only' ), $title ) ) . '</h2>';
+				$message .= '</legend>';
+				$message .= '<div class="' . pmpro_get_element_class( 'pmpro_form_fields' ) . '">';
+					//Add text
+					$message .= '<p>' . esc_html( sprintf( __( '%s', 'pmpro-invite-only' ), $text ) ) . '</p>';
+					//Add invite codes
+					$message .= pmproio_displayInviteCodes(  $current_user->ID);
+				$message .= '</div>';
+			$message .= '</div>';
+		$message .= '</div>';
+	$message .= '</div>';
+	return $message;
 }
-add_filter("pmpro_confirmation_message", "pmproio_pmpro_confirmation_message", 10, 1);
+
+
+add_filter( "pmpro_confirmation_message", "pmproio_pmpro_confirmation_message", 10, 1 );
 
 /*
 	Show invite code fields on edit profile page for admins.
@@ -597,39 +612,60 @@ function pmproio_save_extra_profile_fields( $user_id )
 add_action( 'personal_options_update', 'pmproio_save_extra_profile_fields' );
 add_action( 'edit_user_profile_update', 'pmproio_save_extra_profile_fields' );
 
-/*
-	Show an invite code on the account page.
-*/
-function pmproio_the_content_account_page($content)
-{
+/**
+ * Show invite codes on the 'the_content' filter for the account page.
+ * 
+ * @param string $content The content of the page.
+ * @return string $content The content of the page with invite codes added.
+ * @since TBD
+ */
+function pmproio_the_content_account_page( $content ) {
     global $current_user, $pmpro_pages, $post;
 
-    if(!empty($current_user->ID) && ! empty( $post ) && $post->ID == $pmpro_pages['account'])
-    {
-    	//make sure they have codes
-    	$codes = pmproio_getInviteCodes($current_user->ID);
-        if(empty($codes))
-        	return $content;
+	//bail if not on account page
+	if( empty( $pmpro_pages['account'] ) || empty( $current_user->ID ) || empty( $post ) || $post->ID != $pmpro_pages['account'] ) {
+		return $content;
+	}
 
-        ob_start();
+	//make sure they have codes
+	$codes = pmproio_getInviteCodes( $current_user->ID );
+	//bail if no codes
+	if( empty( $codes ) ) {
+		return $content;
+	}
+
+	$title = 'Your Invite Code';
+	$text = 'Give this code to your invited member to use at checkout';
+	if ( count( $codes ) > 1 ) {
+		$title = 'Your Invite Codes';
+		$text = 'Give these codes to your invited members to use at checkout';
+	}
+
+	ob_start();
         ?>
-        <div id="pmproio_codes" class="pmpro_box clear">
-			<?php if(count($codes) == 1) { ?>
-				<h2><?php esc_html_e('Invite Code', 'pmpro-invite-only'); ?></h2>
-				<p><?php esc_html_e('Give this code to your invited member to use at checkout', 'pmpro-invite-only'); ?></p>
-			<?php } else { ?>
-				<h2><?php esc_html_e('Invite Codes', 'pmpro-invite-only'); ?></h2>
-				<p><?php esc_html_e('Give these codes to your invited members to use at checkout', 'pmpro-invite-only'); ?></p>
-			<?php } ?>
-			<?php echo pmproio_displayInviteCodes(); ?>
-			<h4><?php esc_html_e('Used Invite Codes', 'pmpro-invite-only'); ?></h4>
-			<?php echo pmproio_displayInviteCodes($current_user->ID, false, true);?>
+	<div id="pmproio_codes" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset' ) ) ?>">
+		<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card' ) ) ?>">
+			<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ) ?>">
+				<legend class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_legend' ) ) ?>">
+					<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_heading pmpro_font-large' ) ) ?>">
+						<?php echo esc_html( sprintf( __( '%s', 'pmpro-invite-only' ), $title ) ); ?>
+					</h2>
+				</legend>
+				<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields' ) ) ?>">
+					<p><?php echo esc_html( sprintf( __( '%s', 'pmpro-invite-only' ), $text ) ); ?></p>
+					<?php echo pmproio_displayInviteCodes( $current_user->ID ); ?>
+				</div>
+					<h3 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_heading pmpro_font-medium' ) ) ?>">
+						<?php esc_html_e( 'Used Invite Codes', 'pmpro-invite-only' ); ?>
+					</h3>
+				<?php echo pmproio_displayInviteCodes($current_user->ID, false, true);?>
+			</div>
 		</div>
-		<?php
-        $temp_content = ob_get_contents();
-        ob_end_clean();
-        $content = str_replace('<!-- end pmpro_account-profile -->', '<!-- end pmpro_account-profile -->' . $temp_content, $content);
-    }
+	</div>
+	<?php
+	$temp_content = ob_get_contents();
+	ob_end_clean();
+	$content = str_replace('<!-- end pmpro_account-profile -->', '<!-- end pmpro_account-profile -->' . $temp_content, $content);
     return $content;
 }
 add_filter('the_content', 'pmproio_the_content_account_page', 20, 1);
