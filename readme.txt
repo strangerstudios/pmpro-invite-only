@@ -38,7 +38,7 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 == Changelog ==
 
 = 0.4 - 2024-09-27 =
-* ENHANCEMENT: Updated the frontend UI for compatibility with PMPro v3.1. #71 (@MaximilianoRicoTabo, @kimcoleman)
+* ENHANCEMENT: Updated the frontend UI for compatibility with PMPro v3.1. #29 (@MaximilianoRicoTabo, @kimcoleman)
 
 = 0.3.5 - 2023-08-21 =
 * ENHANCEMENT: Updating `<h3>` tags to `<h2>` tags for better accessibility. #27 (@michaelbeil)
