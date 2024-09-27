@@ -1,14 +1,15 @@
 <?php
-/*
-Plugin Name: Paid Memberships Pro - Invite Only Add On
-Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-invite-only/
-Description: Users must have an invite code to sign up for certain levels. Users are given an invite code to share.
-Version: 0.3.5
-Author: Stranger Studios
-Author URI: http://www.strangerstudios.com
-Text Domain: pmpro-invite-only
-Domain Path: /languages
-*/
+/**
+ * Plugin Name: Paid Memberships Pro - Invite Only Membership Add On
+ * Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-invite-only-membership/
+ * Description: Require an invite code to sign up for the specified Membership Levels (works for free or paid levels).
+ * Version: 0.4
+ * Author: Paid Memberships Pro
+ * Author URI: https://www.paidmembershipspro.com
+ * Text Domain: pmpro-invite-only
+ * Domain Path: /languages
+ * License: GPL-3.0
+ */
 
 /*
 	Set an array with the level ids which should require invite codes and generate them.
@@ -684,8 +685,8 @@ function pmproio_plugin_row_meta($links, $file) {
 	if(strpos($file, 'pmpro-invite-only.php') !== false)
 	{
 		$new_links = array(
-			'<a href="' . esc_url('http://www.paidmembershipspro.com/add-ons/plus-add-ons/pmpro-invite-only/') . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . esc_html__( 'Docs', 'pmpro' ) . '</a>',
-			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . esc_html__( 'Support', 'pmpro' ) . '</a>',
+			'<a href="' . esc_url('https://www.paidmembershipspro.com/add-ons/pmpro-invite-only-membership/') . '" title="' . esc_attr( __( 'View Documentation', 'pmpro-invite-only' ) ) . '">' . esc_html__( 'Docs', 'pmpro-invite-only' ) . '</a>',
+			'<a href="' . esc_url('https://www.paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-invite-only' ) ) . '">' . esc_html__( 'Support', 'pmpro-invite-only' ) . '</a>',
 		);
 		$links = array_merge($links, $new_links);
 	}
