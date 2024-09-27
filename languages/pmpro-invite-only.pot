@@ -1,102 +1,110 @@
-# Copyright (C) 2023 Stranger Studios
-# This file is distributed under the same license as the Paid Memberships Pro - Invite Only Add On plugin.
+# Copyright (C) 2024 Paid Memberships Pro
+# This file is distributed under the GPL-3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Invite Only Add On 0.3.5\n"
+"Project-Id-Version: Paid Memberships Pro - Invite Only Membership Add On 0.4\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-08-21T16:37:39+00:00\n"
+"POT-Creation-Date: 2024-09-27T16:30:19+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.8.1\n"
+"X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: pmpro-invite-only\n"
 
 #. Plugin Name of the plugin
-msgid "Paid Memberships Pro - Invite Only Add On"
+#: pmpro-invite-only.php
+msgid "Paid Memberships Pro - Invite Only Membership Add On"
 msgstr ""
 
 #. Plugin URI of the plugin
-msgid "http://www.paidmembershipspro.com/add-ons/pmpro-invite-only/"
+#: pmpro-invite-only.php
+msgid "https://www.paidmembershipspro.com/add-ons/pmpro-invite-only-membership/"
 msgstr ""
 
 #. Description of the plugin
-msgid "Users must have an invite code to sign up for certain levels. Users are given an invite code to share."
+#: pmpro-invite-only.php
+msgid "Require an invite code to sign up for the specified Membership Levels (works for free or paid levels)."
 msgstr ""
 
 #. Author of the plugin
-msgid "Stranger Studios"
+#: pmpro-invite-only.php
+msgid "Paid Memberships Pro"
 msgstr ""
 
 #. Author URI of the plugin
-msgid "http://www.strangerstudios.com"
+#: pmpro-invite-only.php
+msgid "https://www.paidmembershipspro.com"
 msgstr ""
 
-#: pmpro-invite-only.php:286
+#: pmpro-invite-only.php:287
 msgid "All codes have been used."
 msgstr ""
 
-#: pmpro-invite-only.php:312
+#: pmpro-invite-only.php:313
 msgid "None of your codes have been used."
 msgstr ""
 
-#: pmpro-invite-only.php:320
+#: pmpro-invite-only.php:321
 msgid "Member"
 msgstr ""
 
-#: pmpro-invite-only.php:321
-#: pmpro-invite-only.php:390
-#: pmpro-invite-only.php:396
-#: pmpro-invite-only.php:618
+#: pmpro-invite-only.php:322
+#: pmpro-invite-only.php:392
+#: pmpro-invite-only.php:397
 msgid "Invite Code"
 msgstr ""
 
-#: pmpro-invite-only.php:333
+#: pmpro-invite-only.php:334
 msgid "N/A (Deleted or abandoned."
 msgstr ""
 
-#: pmpro-invite-only.php:426
+#: pmpro-invite-only.php:427
 msgid "An invite code is required for this level. Please enter a valid invite code."
 msgstr ""
 
-#: pmpro-invite-only.php:516
-msgid "Your Invite Code"
+#: pmpro-invite-only.php:525
+#: pmpro-invite-only.php:528
+#: pmpro-invite-only.php:638
+#: pmpro-invite-only.php:641
+msgid "%s"
 msgstr ""
 
-#: pmpro-invite-only.php:517
-#: pmpro-invite-only.php:619
-msgid "Give this code to your invited member to use at checkout"
-msgstr ""
-
-#: pmpro-invite-only.php:521
-msgid "Your Invite Codes"
-msgstr ""
-
-#: pmpro-invite-only.php:522
-#: pmpro-invite-only.php:622
-msgid "Give these codes to your invited members to use at checkout"
-msgstr ""
-
-#: pmpro-invite-only.php:541
-#: pmpro-invite-only.php:621
+#: pmpro-invite-only.php:548
 msgid "Invite Codes"
 msgstr ""
 
-#: pmpro-invite-only.php:542
+#: pmpro-invite-only.php:549
 msgid "Available Invite Codes"
 msgstr ""
 
-#: pmpro-invite-only.php:544
+#: pmpro-invite-only.php:551
 msgid "Increase total available invites to"
 msgstr ""
 
-#: pmpro-invite-only.php:546
-#: pmpro-invite-only.php:625
+#: pmpro-invite-only.php:552
+#: pmpro-invite-only.php:645
 msgid "Used Invite Codes"
 msgstr ""
 
-#: pmpro-invite-only.php:551
+#: pmpro-invite-only.php:557
 msgid "Invite Code Used at Signup"
+msgstr ""
+
+#: pmpro-invite-only.php:688
+msgid "View Documentation"
+msgstr ""
+
+#: pmpro-invite-only.php:688
+msgid "Docs"
+msgstr ""
+
+#: pmpro-invite-only.php:689
+msgid "Visit Customer Support Forum"
+msgstr ""
+
+#: pmpro-invite-only.php:689
+msgid "Support"
 msgstr ""
