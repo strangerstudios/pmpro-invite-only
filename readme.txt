@@ -1,9 +1,12 @@
-=== Paid Memberships Pro - Invite Only Add On ===
+=== Paid Memberships Pro - Invite Only Membership Add On ===
 Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, membership, invite
-Requires at least: 3.5
-Tested up to: 6.3
-Stable tag: 0.3.5
+Requires at least: 5.4
+Tested up to: 6.6
+Requires PHP: 5.6
+Stable tag: 0.4
+License: GPLv3
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Specify membership level(s) as "invite only" and provide members with invite codes to share after checkout.
 
@@ -33,6 +36,10 @@ Note: this plugin requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-invite-only/issues
 
 == Changelog ==
+
+= 0.4 - 2024-09-27 =
+* ENHANCEMENT: Updated the frontend UI for compatibility with PMPro v3.1. #71 (@MaximilianoRicoTabo, @kimcoleman)
+
 = 0.3.5 - 2023-08-21 =
 * ENHANCEMENT: Updating `<h3>` tags to `<h2>` tags for better accessibility. #27 (@michaelbeil)
 * BUG FIX/ENHANCEMENT: Improved compatibility with PMPro Multiple Memberships Per User Add On. #22 (@dparker1005)
