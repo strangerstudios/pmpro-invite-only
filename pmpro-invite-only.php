@@ -11,6 +11,10 @@
  * License: GPL-3.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /*
 	Set an array with the level ids which should require invite codes and generate them.
 
@@ -111,6 +115,7 @@ function pmproio_getInviteCodes($user_id = null, $sort_codes = false)
 	//figure out used codes
 	foreach($codes as $code)
     {
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Code is escaped with esc_sql() inside quotes; no caching needed.
         $user_ids = $wpdb->get_col("SELECT user_id FROM " . $wpdb->usermeta . " WHERE meta_key LIKE 'pmpro_invite_code_at_signup' AND meta_value LIKE '" . esc_sql( $code ) . "'");
 	    if(!empty($user_ids)) {
 
@@ -247,6 +252,7 @@ function pmproio_checkInviteCode($invite_code)
     //has code already been used?
     if(PMPROIO_CODES_USES)
 	{
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Code is escaped with esc_sql() inside quotes; no caching needed.
 		$used = $wpdb->get_var("SELECT COUNT(user_id) FROM " . $wpdb->usermeta . " WHERE meta_key LIKE 'pmpro_invite_code_at_signup' AND meta_value LIKE '" . esc_sql($invite_code) . "'");
 
 		//valid if we didn't hit use limit yet
@@ -331,7 +337,7 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 							$display_name = get_userdata($user_id)->display_name;
 							if(empty($display_name))
 							{
-								$display_name = esc_html__( 'N/A (Deleted or abandoned.', 'pmpro-invite-only' );
+								$display_name = __( 'N/A (Deleted or abandoned.', 'pmpro-invite-only' );
 							}
 							else
 							{
@@ -343,12 +349,12 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 								<th scope="row">
 									<?php
 									if(!empty($userlink))
-										echo $userlink;
+										echo $userlink; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built above with esc_url() and esc_html().
 									else
-										echo $display_name;
+										echo esc_html( $display_name );
 									?>
 								</th>
-								<td><?php echo $code; ?></td>
+								<td><?php echo esc_html( $code ); ?></td>
 							</tr><?php
 						}
 					}
@@ -373,10 +379,11 @@ function pmproio_pmpro_checkout_boxes()
 	global $pmpro_level, $current_user, $pmpro_review;
 	if(pmproio_isInviteLevel($pmpro_level->id))
 	{
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only prefill of the checkout field.
 		if(!empty($_REQUEST['invite_code']))
-			$invite_code = $_REQUEST['invite_code'];
+			$invite_code = sanitize_text_field( wp_unslash( $_REQUEST['invite_code'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only prefill of the checkout field.
 		elseif(!empty($_SESSION['invite_code']))
-			$invite_code = $_SESSION['invite_code'];
+			$invite_code = sanitize_text_field( $_SESSION['invite_code'] );
 		elseif(is_user_logged_in())
 			$invite_code = $current_user->pmpro_invite_code_at_signup;
 		else
@@ -418,7 +425,7 @@ function pmproio_pmpro_registration_checks($okay)
 		global $pmpro_msg, $pmpro_msgt, $pmpro_error_fields, $wpdb;
 
 		//get invite code
-		$invite_code = $_REQUEST['invite_code'];
+		$invite_code = isset( $_REQUEST['invite_code'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['invite_code'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Checkout nonce is verified in PMPro's checkout preheader before pmpro_registration_checks.
 
         $real = pmproio_checkInviteCode($invite_code);
 
@@ -456,10 +463,11 @@ function pmproio_pmpro_after_checkout( $user_id )
 
 	if ( ! empty( $level ) && pmproio_isInviteLevel( $level->id ) ) {
 		//look for code
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Runs after PMPro checkout; nonce verified in PMPro's checkout preheader.
 		if(!empty($_REQUEST['invite_code']))
-			$invite_code = $_REQUEST['invite_code'];
+			$invite_code = sanitize_text_field( $_REQUEST['invite_code'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Nonce verified in PMPro's checkout preheader. Saved with update_user_meta(), which unslashes.
 		elseif(!empty($_SESSION['invite_code']))
-			$invite_code = $_SESSION['invite_code'];
+			$invite_code = sanitize_text_field( $_SESSION['invite_code'] );
 		else
 			$invite_code = false;
 
@@ -479,8 +487,9 @@ add_action("pmpro_after_checkout", "pmproio_pmpro_after_checkout", 10, 1);
 */
 function pmproio_pmpro_paypalexpress_session_vars()
 {
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Runs during PMPro checkout; nonce verified in PMPro's checkout preheader.
 	if(!empty($_REQUEST['invite_code']))
-		$_SESSION['invite_code'] = $_REQUEST['invite_code'];
+		$_SESSION['invite_code'] = sanitize_text_field( $_REQUEST['invite_code'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Nonce verified in PMPro's checkout preheader. Later saved with update_user_meta(), which unslashes.
 }
 add_action("pmpro_paypalexpress_session_vars", "pmproio_pmpro_paypalexpress_session_vars");
 
@@ -490,9 +499,10 @@ add_action("pmpro_paypalexpress_session_vars", "pmproio_pmpro_paypalexpress_sess
 */
 function pmproio_pmpro_wp_new_user_notification($notify, $user_id)
 {
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Runs during PMPro checkout; nonce verified in PMPro's checkout preheader.
     if(!empty($_REQUEST['invite_code']))
     {
-        update_user_meta($user_id, "pmpro_invite_code_at_signup", $_REQUEST['invite_code']);
+        update_user_meta($user_id, "pmpro_invite_code_at_signup", sanitize_text_field( $_REQUEST['invite_code'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Nonce verified in PMPro's checkout preheader. update_user_meta() unslashes.
     }
 
 	return $notify;
@@ -547,10 +557,10 @@ function pmproio_show_extra_profile_fields($user)
 		<hr />
 		<h2><?php esc_html_e('Invite Codes', 'pmpro-invite-only');?></h2>
 		<p><strong><?php esc_html_e('Available Invite Codes', 'pmpro-invite-only');?></strong></p>
-		<?php echo pmproio_displayInviteCodes($user->ID);?>
+		<?php echo pmproio_displayInviteCodes($user->ID); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Function returns escaped HTML. ?>
 		<p><?php esc_html_e('Increase total available invites to', 'pmpro-invite-only'); ?> <input type="text" class="input" size="4" name="pmpro_add_invites" id="pmpro_add_invites" value="" /></p>
 		<p><strong><?php esc_html_e('Used Invite Codes', 'pmpro-invite-only');?></strong></p>
-		<?php echo pmproio_displayInviteCodes($user->ID, false, true); ?>
+		<?php echo pmproio_displayInviteCodes($user->ID, false, true); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Function returns escaped HTML. ?>
 		<hr />
 		<table class="form-table">
 			<tr>
@@ -589,9 +599,9 @@ function pmproio_save_extra_profile_fields( $user_id )
 	if ( !current_user_can( 'edit_user', $user_id ) )
 		return false;
 
-	$invites_to_add = intval($_POST['pmpro_add_invites'], 10);
+	$invites_to_add = isset( $_POST['pmpro_add_invites'] ) ? intval( $_POST['pmpro_add_invites'], 10 ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WordPress core profile save.
 
-	if(!empty($_POST['pmpro_add_invites']) && $invites_to_add > 0 && current_user_can("manage_options"))
+	if(!empty($_POST['pmpro_add_invites']) && $invites_to_add > 0 && current_user_can("manage_options")) // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WordPress core profile save.
 	{
 		$codes = pmproio_createInviteCodes($user_id, true, $invites_to_add);
 		pmproio_saveInviteCodes($codes, $user_id);
@@ -636,11 +646,11 @@ function pmproio_the_content_account_page( $content ) {
 			<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ) ?>">
 				<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields' ) ) ?>">
 					<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields-description' ) ); ?>"><?php echo esc_html( sprintf( __( '%s', 'pmpro-invite-only' ), $text ) ); ?></p>
-					<?php echo pmproio_displayInviteCodes( $current_user->ID ); ?>
+					<?php echo pmproio_displayInviteCodes( $current_user->ID ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Function returns escaped HTML. ?>
 				</div> <!-- end pmpro_form_fields -->
 				<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_spacer' ) ); ?>"></div>
 				<p><strong><?php esc_html_e( 'Used Invite Codes', 'pmpro-invite-only' ); ?></strong></p>
-				<?php echo pmproio_displayInviteCodes($current_user->ID, false, true);?>
+				<?php echo pmproio_displayInviteCodes($current_user->ID, false, true); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Function returns escaped HTML. ?>
 				</div> <!-- end pmpro_card_content -->
 			</div> <!-- end pmpro_card -->
 		<?php
