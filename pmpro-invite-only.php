@@ -589,9 +589,6 @@ function pmproio_save_extra_profile_fields( $user_id )
 	if ( !current_user_can( 'edit_user', $user_id ) )
 		return false;
 
-	if(!empty($_POST['invite_code']))
-		update_user_meta($user_id, "pmpro_invite_code", $_POST['invite_code']);
-
 	$invites_to_add = intval($_POST['pmpro_add_invites'], 10);
 
 	if(!empty($_POST['pmpro_add_invites']) && $invites_to_add > 0 && current_user_can("manage_options"))
@@ -668,7 +665,7 @@ function pmproio_pmpro_email_body($body, $email)
 			$list = "";
 			foreach($codes as $code)
 			{
-				$list .= "{$code}<br>";
+				$list .= esc_html( $code ) . "<br>";
 			}
 			$body = str_replace("<p>Account:", "<p>Give these invite codes to others to use at checkout:<br><strong>{$list}</strong></p><p>Account:", $body);
 		}
