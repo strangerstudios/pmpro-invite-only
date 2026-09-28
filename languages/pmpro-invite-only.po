@@ -1,17 +1,17 @@
-# Copyright (C) 2024 Paid Memberships Pro
+# Copyright (C) 2026 Paid Memberships Pro
 # This file is distributed under the GPL-3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Invite Only Membership Add On 0.4\n"
+"Project-Id-Version: Paid Memberships Pro - Invite Only Membership Add On 0.4.1\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-09-27T16:30:19+00:00\n"
+"POT-Creation-Date: 2026-09-28T18:49:48+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.11.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-invite-only\n"
 
 #. Plugin Name of the plugin
@@ -36,16 +36,19 @@ msgstr ""
 
 #: pmpro-invite-only.php:286
 #: pmpro-invite-only.php:287
+#: pmpro-invite-only.php:293
 msgid "All codes have been used."
 msgstr ""
 
 #: pmpro-invite-only.php:312
 #: pmpro-invite-only.php:313
+#: pmpro-invite-only.php:319
 msgid "None of your codes have been used."
 msgstr ""
 
 #: pmpro-invite-only.php:320
 #: pmpro-invite-only.php:321
+#: pmpro-invite-only.php:327
 msgid "Member"
 msgstr ""
 
@@ -56,16 +59,21 @@ msgstr ""
 #: pmpro-invite-only.php:322
 #: pmpro-invite-only.php:392
 #: pmpro-invite-only.php:397
+#: pmpro-invite-only.php:328
+#: pmpro-invite-only.php:399
+#: pmpro-invite-only.php:404
 msgid "Invite Code"
 msgstr ""
 
 #: pmpro-invite-only.php:333
 #: pmpro-invite-only.php:334
+#: pmpro-invite-only.php:340
 msgid "N/A (Deleted or abandoned."
 msgstr ""
 
 #: pmpro-invite-only.php:426
 #: pmpro-invite-only.php:427
+#: pmpro-invite-only.php:434
 msgid "An invite code is required for this level. Please enter a valid invite code."
 msgstr ""
 
@@ -90,16 +98,19 @@ msgstr ""
 #: pmpro-invite-only.php:541
 #: pmpro-invite-only.php:621
 #: pmpro-invite-only.php:548
+#: pmpro-invite-only.php:558
 msgid "Invite Codes"
 msgstr ""
 
 #: pmpro-invite-only.php:542
 #: pmpro-invite-only.php:549
+#: pmpro-invite-only.php:559
 msgid "Available Invite Codes"
 msgstr ""
 
 #: pmpro-invite-only.php:544
 #: pmpro-invite-only.php:551
+#: pmpro-invite-only.php:561
 msgid "Increase total available invites to"
 msgstr ""
 
@@ -107,11 +118,14 @@ msgstr ""
 #: pmpro-invite-only.php:625
 #: pmpro-invite-only.php:552
 #: pmpro-invite-only.php:645
+#: pmpro-invite-only.php:562
+#: pmpro-invite-only.php:652
 msgid "Used Invite Codes"
 msgstr ""
 
 #: pmpro-invite-only.php:551
 #: pmpro-invite-only.php:557
+#: pmpro-invite-only.php:567
 msgid "Invite Code Used at Signup"
 msgstr ""
 
@@ -144,21 +158,30 @@ msgstr ""
 #: pmpro-invite-only.php:528
 #: pmpro-invite-only.php:638
 #: pmpro-invite-only.php:641
+#: pmpro-invite-only.php:535
+#: pmpro-invite-only.php:538
+#: pmpro-invite-only.php:645
+#: pmpro-invite-only.php:648
+#, php-format
 msgid "%s"
 msgstr ""
 
 #: pmpro-invite-only.php:688
+#: pmpro-invite-only.php:695
 msgid "View Documentation"
 msgstr ""
 
 #: pmpro-invite-only.php:688
+#: pmpro-invite-only.php:695
 msgid "Docs"
 msgstr ""
 
 #: pmpro-invite-only.php:689
+#: pmpro-invite-only.php:696
 msgid "Visit Customer Support Forum"
 msgstr ""
 
 #: pmpro-invite-only.php:689
+#: pmpro-invite-only.php:696
 msgid "Support"
 msgstr ""
