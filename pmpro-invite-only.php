@@ -3,7 +3,7 @@
  * Plugin Name: Paid Memberships Pro - Invite Only Membership Add On
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-invite-only-membership/
  * Description: Require an invite code to sign up for the specified Membership Levels (works for free or paid levels).
- * Version: 0.4
+ * Version: 0.4.1
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
  * Text Domain: pmpro-invite-only
@@ -514,7 +514,7 @@ add_filter('pmpro_wp_new_user_notification', 'pmproio_pmpro_wp_new_user_notifica
  *
  * @param string $message  The confirmation message.
  * @return string $message filtered with invite codes added.
- * @since TBD
+ * @since 0.4
  */
 function pmproio_pmpro_confirmation_message( $message ) {
 	global $current_user;
@@ -615,7 +615,7 @@ add_action( 'edit_user_profile_update', 'pmproio_save_extra_profile_fields' );
  * 
  * @param string $content The content of the page.
  * @return string $content The content of the page with invite codes added.
- * @since TBD
+ * @since 0.4
  */
 function pmproio_the_content_account_page( $content ) {
     global $current_user, $pmpro_pages, $post;

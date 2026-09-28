@@ -2,9 +2,9 @@
 Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, membership, invite
 Requires at least: 5.4
-Tested up to: 6.6
+Tested up to: 7.1
 Requires PHP: 5.6
-Stable tag: 0.4
+Stable tag: 0.4.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -36,6 +36,13 @@ Note: this plugin requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-invite-only/issues
 
 == Changelog ==
+
+= 0.4.1 - 2026-09-28 =
+* SECURITY: Members can no longer add or change their own invite codes. Only admins can add invite codes to a member. #34 (@dparker1005)
+* SECURITY: Escaped invite codes in checkout emails. #34 (@dparker1005)
+* SECURITY: Escaped invite codes and member names in the used invite codes table. #33 (@dparker1005)
+* SECURITY: Sanitized the invite code submitted at checkout. #33 (@dparker1005)
+* BUG FIX: Fixed undefined index notices when the invite code or "add invites" field is not submitted. #33 (@dparker1005)
 
 = 0.4 - 2024-09-27 =
 * ENHANCEMENT: Updated the frontend UI for compatibility with PMPro v3.1. #29 (@MaximilianoRicoTabo, @kimcoleman)
