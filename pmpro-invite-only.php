@@ -599,10 +599,6 @@ function pmproio_save_extra_profile_fields( $user_id )
 	if ( !current_user_can( 'edit_user', $user_id ) )
 		return false;
 
-	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WordPress core (check_admin_referer 'update-user_{id}') before personal_options_update / edit_user_profile_update.
-	if(!empty($_POST['invite_code']))
-		update_user_meta($user_id, "pmpro_invite_code", $_POST['invite_code']); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Nonce verified by WordPress core profile save. update_user_meta() unslashes.
-
 	$invites_to_add = isset( $_POST['pmpro_add_invites'] ) ? intval( $_POST['pmpro_add_invites'], 10 ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WordPress core profile save.
 
 	if(!empty($_POST['pmpro_add_invites']) && $invites_to_add > 0 && current_user_can("manage_options")) // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WordPress core profile save.
@@ -679,7 +675,7 @@ function pmproio_pmpro_email_body($body, $email)
 			$list = "";
 			foreach($codes as $code)
 			{
-				$list .= "{$code}<br>";
+				$list .= esc_html( $code ) . "<br>";
 			}
 			$body = str_replace("<p>Account:", "<p>Give these invite codes to others to use at checkout:<br><strong>{$list}</strong></p><p>Account:", $body);
 		}
