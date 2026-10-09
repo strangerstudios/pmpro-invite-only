@@ -546,69 +546,19 @@ function pmproio_pmpro_confirmation_message( $message ) {
 
 add_filter( "pmpro_confirmation_message", "pmproio_pmpro_confirmation_message", 10, 1 );
 
-/*
-	Show invite code fields on edit profile page for admins.
-*/
-function pmproio_show_extra_profile_fields($user)
-{
-	if(current_user_can('manage_options'))
-	{
-		?>
-		<hr />
-		<h2><?php esc_html_e('Invite Codes', 'pmpro-invite-only');?></h2>
-		<p><strong><?php esc_html_e('Available Invite Codes', 'pmpro-invite-only');?></strong></p>
-		<?php echo pmproio_displayInviteCodes($user->ID); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Function returns escaped HTML. ?>
-		<p><?php esc_html_e('Increase total available invites to', 'pmpro-invite-only'); ?> <input type="text" class="input" size="4" name="pmpro_add_invites" id="pmpro_add_invites" value="" /></p>
-		<p><strong><?php esc_html_e('Used Invite Codes', 'pmpro-invite-only');?></strong></p>
-		<?php echo pmproio_displayInviteCodes($user->ID, false, true); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Function returns escaped HTML. ?>
-		<hr />
-		<table class="form-table">
-			<tr>
-				<th><?php esc_html_e('Invite Code Used at Signup', 'pmpro-invite-only');?></th>
-				<td>
-					<?php
-						$invite_code_used = $user->pmpro_invite_code_at_signup;
-						if(empty($invite_code_used)) {
-							echo "N/A";
-						}
-						else {
-							$user_id = pmproio_getUserFromInviteCode($invite_code_used);
-							$user_info = get_userdata($user_id);
+/**
+ * Add an Invite Codes panel to the Edit Member screen.
+ *
+ * @param array $panels The existing member edit panels.
+ * @return array The modified member edit panels.
+ */
+function pmproio_member_edit_panels( $panels ) {
+	require_once( dirname( __FILE__ ) . '/classes/class-pmproio-member-edit-panel.php' );
+	$panels[] = new PMProio_Member_Edit_Panel();
 
-							if (false !== $user_info) {
-								echo esc_html( sprintf("%s (%s)", $invite_code_used, $user_info->display_name) );
-							}
-							else {
-								echo esc_html( $invite_code_used );
-							}
-						}
-					?>
-				</td>
-			</tr>
-		</table>
-		<?php
-	}
+	return $panels;
 }
-
-add_action( 'show_user_profile', 'pmproio_show_extra_profile_fields' );
-add_action( 'edit_user_profile', 'pmproio_show_extra_profile_fields' );
-
-//save them
-function pmproio_save_extra_profile_fields( $user_id )
-{
-	if ( !current_user_can( 'edit_user', $user_id ) )
-		return false;
-
-	$invites_to_add = isset( $_POST['pmpro_add_invites'] ) ? intval( $_POST['pmpro_add_invites'], 10 ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WordPress core profile save.
-
-	if(!empty($_POST['pmpro_add_invites']) && $invites_to_add > 0 && current_user_can("manage_options")) // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WordPress core profile save.
-	{
-		$codes = pmproio_createInviteCodes($user_id, true, $invites_to_add);
-		pmproio_saveInviteCodes($codes, $user_id);
-	}
-}
-add_action( 'personal_options_update', 'pmproio_save_extra_profile_fields' );
-add_action( 'edit_user_profile_update', 'pmproio_save_extra_profile_fields' );
+add_filter( 'pmpro_member_edit_panels', 'pmproio_member_edit_panels' );
 
 /**
  * Show invite codes on the 'the_content' filter for the account page.
