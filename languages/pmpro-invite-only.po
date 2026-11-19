@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Invite Only Membership Add On 0.4.1\n"
+"Project-Id-Version: Paid Memberships Pro - Invite Only Membership Add On 0.5\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-28T18:49:48+00:00\n"
+"POT-Creation-Date: 2026-11-19T15:27:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-invite-only\n"
@@ -99,18 +99,21 @@ msgstr ""
 #: pmpro-invite-only.php:621
 #: pmpro-invite-only.php:548
 #: pmpro-invite-only.php:558
+#: classes/class-pmproio-member-edit-panel.php:9
 msgid "Invite Codes"
 msgstr ""
 
 #: pmpro-invite-only.php:542
 #: pmpro-invite-only.php:549
 #: pmpro-invite-only.php:559
+#: classes/class-pmproio-member-edit-panel.php:26
 msgid "Available Invite Codes"
 msgstr ""
 
 #: pmpro-invite-only.php:544
 #: pmpro-invite-only.php:551
 #: pmpro-invite-only.php:561
+#: classes/class-pmproio-member-edit-panel.php:28
 msgid "Increase total available invites to"
 msgstr ""
 
@@ -120,12 +123,15 @@ msgstr ""
 #: pmpro-invite-only.php:645
 #: pmpro-invite-only.php:562
 #: pmpro-invite-only.php:652
+#: classes/class-pmproio-member-edit-panel.php:29
+#: pmpro-invite-only.php:607
 msgid "Used Invite Codes"
 msgstr ""
 
 #: pmpro-invite-only.php:551
 #: pmpro-invite-only.php:557
 #: pmpro-invite-only.php:567
+#: classes/class-pmproio-member-edit-panel.php:33
 msgid "Invite Code Used at Signup"
 msgstr ""
 
@@ -162,26 +168,40 @@ msgstr ""
 #: pmpro-invite-only.php:538
 #: pmpro-invite-only.php:645
 #: pmpro-invite-only.php:648
+#: pmpro-invite-only.php:600
+#: pmpro-invite-only.php:603
 #, php-format
 msgid "%s"
 msgstr ""
 
 #: pmpro-invite-only.php:688
 #: pmpro-invite-only.php:695
+#: pmpro-invite-only.php:650
 msgid "View Documentation"
 msgstr ""
 
 #: pmpro-invite-only.php:688
 #: pmpro-invite-only.php:695
+#: pmpro-invite-only.php:650
 msgid "Docs"
 msgstr ""
 
 #: pmpro-invite-only.php:689
 #: pmpro-invite-only.php:696
+#: pmpro-invite-only.php:651
 msgid "Visit Customer Support Forum"
 msgstr ""
 
 #: pmpro-invite-only.php:689
 #: pmpro-invite-only.php:696
+#: pmpro-invite-only.php:651
 msgid "Support"
+msgstr ""
+
+#: classes/class-pmproio-member-edit-panel.php:10
+msgid "Update Invite Codes"
+msgstr ""
+
+#: classes/class-pmproio-member-edit-panel.php:38
+msgid "N/A"
 msgstr ""
