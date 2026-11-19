@@ -342,7 +342,7 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 							else
 							{
 								if(current_user_can('manage_options'))
-									$userlink = "<a href=" . esc_url( add_query_arg('user_id', $user_id, admin_url('user-edit.php') ) ) . ">" . esc_html( $display_name ) . "</a>";
+									$userlink = "<a href=" . esc_url( add_query_arg( array( 'page' => 'pmpro-member', 'user_id' => $user_id, 'pmpro_member_edit_panel' => 'invite-codes' ), admin_url( 'admin.php' ) ) ) . ">" . esc_html( $display_name ) . "</a>";
 							}
 							?>
 							<tr>
