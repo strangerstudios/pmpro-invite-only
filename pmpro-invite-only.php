@@ -553,6 +553,11 @@ add_filter( "pmpro_confirmation_message", "pmproio_pmpro_confirmation_message", 
  * @return array The modified member edit panels.
  */
 function pmproio_member_edit_panels( $panels ) {
+	// Only admins can see or save this panel.
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return $panels;
+	}
+
 	require_once( dirname( __FILE__ ) . '/classes/class-pmproio-member-edit-panel.php' );
 	$panels[] = new PMProio_Member_Edit_Panel();
 

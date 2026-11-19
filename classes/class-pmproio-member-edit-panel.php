@@ -35,7 +35,7 @@ class PMProio_Member_Edit_Panel extends PMPro_Member_Edit_Panel {
 					<?php
 						$invite_code_used = $user->pmpro_invite_code_at_signup;
 						if ( empty( $invite_code_used ) ) {
-							echo 'N/A';
+							esc_html_e( 'N/A', 'pmpro-invite-only' );
 						} else {
 							$user_id   = pmproio_getUserFromInviteCode( $invite_code_used );
 							$user_info = get_userdata( $user_id );
