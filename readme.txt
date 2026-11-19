@@ -4,7 +4,7 @@ Tags: pmpro, paid memberships pro, membership, invite
 Requires at least: 5.4
 Tested up to: 7.1
 Requires PHP: 5.6
-Stable tag: 0.4.1
+Stable tag: 0.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -18,7 +18,7 @@ After completing their membership checkout, your member will receive a unique in
 
 A list of used/unused invite code(s) is displayed on the Membership Account page, allowing a member to see who has used their code to register and manage the unused codes tied to their account.
 
-The admin can increase the number of invites available for a user on the "Edit User" page.
+The admin can increase the number of invites available for a user in the "Invite Codes" panel on the Edit Member screen.
 
 Note: this plugin requires Paid Memberships Pro. 
 
@@ -36,6 +36,9 @@ Note: this plugin requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-invite-only/issues
 
 == Changelog ==
+
+= 0.5 - 2026-11-19 =
+* ENHANCEMENT: Moved the admin Invite Codes section from the Edit User screen to an "Invite Codes" panel on the PMPro Edit Member screen. #35 (@dparker1005)
 
 = 0.4.1 - 2026-09-28 =
 * SECURITY: Members can no longer add or change their own invite codes. Only admins can add invite codes to a member. #34 (@dparker1005)

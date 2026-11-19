@@ -3,7 +3,7 @@
  * Plugin Name: Paid Memberships Pro - Invite Only Membership Add On
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-invite-only-membership/
  * Description: Require an invite code to sign up for the specified Membership Levels (works for free or paid levels).
- * Version: 0.4.1
+ * Version: 0.5
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
  * Text Domain: pmpro-invite-only
