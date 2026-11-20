@@ -290,7 +290,7 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
     if(!empty($unused))
     {
 		if(empty($codes['unused']))
-			esc_html__('All codes have been used.','pmpro-invite-only');
+			echo '<p>' . esc_html__('All codes have been used.','pmpro-invite-only') . '</p>';
 		else
 		{
 			?>
