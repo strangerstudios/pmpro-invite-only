@@ -337,7 +337,7 @@ function pmproio_displayInviteCodes($user_id = null, $unused = true, $used = fal
 							$display_name = get_userdata($user_id)->display_name;
 							if(empty($display_name))
 							{
-								$display_name = __( 'N/A (Deleted or abandoned.', 'pmpro-invite-only' );
+								$display_name = __( 'N/A (Deleted or abandoned.)', 'pmpro-invite-only' );
 							}
 							else
 							{
@@ -524,18 +524,18 @@ function pmproio_pmpro_confirmation_message( $message ) {
 	if( empty( $codes ) || empty( $level ) ) {
 		return $message;
 	}
-	$title = 'Your Invite Code';
-	$text = 'Give this code to your invited member to use at checkout';
+	$title = __( 'Your Invite Code', 'pmpro-invite-only' );
+	$text = __( 'Give this code to your invited member to use at checkout', 'pmpro-invite-only' );
 	if ( count( $codes ) > 1 ) {
-		$title = 'Your Invite Codes';
-		$text = 'Give these codes to your invited members to use at checkout';
+		$title = __( 'Your Invite Codes', 'pmpro-invite-only' );
+		$text = __( 'Give these codes to your invited members to use at checkout', 'pmpro-invite-only' );
 	}
 	//Add pmpro_card div
 	$message .= '<div class="' . esc_attr( pmpro_get_element_class( 'pmpro_card' ) ) . '">';
-	$message .= '<h2 class="' . esc_attr( pmpro_get_element_class( 'pmpro_card_title pmpro_font-large' ) ) . '">' . esc_html( sprintf( __( '%s', 'pmpro-invite-only' ), $title ) ) . '</h2>';
+	$message .= '<h2 class="' . esc_attr( pmpro_get_element_class( 'pmpro_card_title pmpro_font-large' ) ) . '">' . esc_html( $title ) . '</h2>';
 	$message .= '<div class="' . esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ) . '">';
 	$message .= '<div class="' . esc_attr( pmpro_get_element_class( 'pmpro_form_fields' ) ) . '">';
-	$message .= '<p class="' . esc_attr( pmpro_get_element_class( 'pmpro_form_fields-description' ) ) . '">' . esc_html( sprintf( __( '%s', 'pmpro-invite-only' ), $text ) ) . '</p>';
+	$message .= '<p class="' . esc_attr( pmpro_get_element_class( 'pmpro_form_fields-description' ) ) . '">' . esc_html( $text ) . '</p>';
 	$message .= pmproio_displayInviteCodes(  $current_user->ID);
 	$message .= '</div>';
 	$message .= '</div>';
@@ -587,20 +587,20 @@ function pmproio_the_content_account_page( $content ) {
 		return $content;
 	}
 
-	$title = 'Your Invite Code';
-	$text = 'Give this code to your invited member to use at checkout';
+	$title = __( 'Your Invite Code', 'pmpro-invite-only' );
+	$text = __( 'Give this code to your invited member to use at checkout', 'pmpro-invite-only' );
 	if ( count( $codes ) > 1 ) {
-		$title = 'Your Invite Codes';
-		$text = 'Give these codes to your invited members to use at checkout';
+		$title = __( 'Your Invite Codes', 'pmpro-invite-only' );
+		$text = __( 'Give these codes to your invited members to use at checkout', 'pmpro-invite-only' );
 	}
 
 	ob_start();
         ?>
 		<div id="pmproio_codes" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card', 'pmproio_codes' ) ) ?>">
-			<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_title pmpro_font-large' ) ) ?>"><?php echo esc_html( sprintf( __( '%s', 'pmpro-invite-only' ), $title ) ); ?></h2>
+			<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_title pmpro_font-large' ) ) ?>"><?php echo esc_html( $title ); ?></h2>
 			<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ) ?>">
 				<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields' ) ) ?>">
-					<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields-description' ) ); ?>"><?php echo esc_html( sprintf( __( '%s', 'pmpro-invite-only' ), $text ) ); ?></p>
+					<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields-description' ) ); ?>"><?php echo esc_html( $text ); ?></p>
 					<?php echo pmproio_displayInviteCodes( $current_user->ID ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Function returns escaped HTML. ?>
 				</div> <!-- end pmpro_form_fields -->
 				<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_spacer' ) ); ?>"></div>
