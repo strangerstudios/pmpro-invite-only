@@ -91,7 +91,7 @@ function pmproio_getInviteCodes($user_id = null, $sort_codes = false)
     global $current_user, $wpdb;
 
     if(empty($user_id))
-        $user_id = $current_user->id;
+        $user_id = $current_user->ID;
 
     //return if we still don't have a user id
     if(empty($user_id))
