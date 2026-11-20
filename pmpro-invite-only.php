@@ -246,7 +246,7 @@ function pmproio_checkInviteCode($invite_code)
 
     //search for code
     $user_codes = pmproio_getInviteCodes($user_id);
-    if(!in_array($invite_code, $user_codes))
+    if(empty($user_codes) || !in_array($invite_code, $user_codes))
         return false;
 
     //has code already been used?
