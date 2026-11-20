@@ -210,7 +210,7 @@ function pmproio_createInviteCodes($user_id = null, $admin_override = false, $ad
 			$id_part = str_pad(dechex($user_id), 4, '0', STR_PAD_LEFT);
 
 			//random scramble part
-			$scramble = strtoupper(md5(AUTH_KEY . $user_id . time() . SECURE_AUTH_KEY));
+			$scramble = strtoupper(md5(AUTH_KEY . $user_id . time() . wp_generate_password( 20, false ) . SECURE_AUTH_KEY));
 
 			$code = substr($id_part . $scramble, 0, 14);
 
